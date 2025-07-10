@@ -4,45 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Desafio Pico-Pico</title>
-
-  <!-- Fonte cartoon (Google Fonts) -->
-  <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css" />
-  <style>
-    h1 {
-      font-family: 'Chewy', cursive;
-      font-size: 2.5rem;
-    }
-
-    header p {
-      font-family: 'Comic Neue', cursive;
-      font-weight: bold;
-      background-color: #fff4c4;
-      padding: 0.5rem;
-      border-radius: 8px;
-      margin-top: 0.5rem;
-      display: inline-block;
-    }
-
-    .score-panel span {
-      font-size: 1.1rem;
-      margin: 0 10px;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🐥 Desafio Pico-Pico</h1>
+      <h1>Desafio Pico-Pico</h1>
       <p>Jogo da Memória – Teste os seus limites!</p>
     </header>
 
     <div class="score-panel">
-      <span>📍 Jogadas: <span id="moves">0</span></span>
-      <span>🏆 Pontos: <span id="score">0</span></span>
-      <span>⏱️ Tempo: <span id="timer">00:00</span></span>
-      <span>🎯 Nível: <span id="level">1</span></span>
+      <span>Jogadas: <span id="moves">0</span></span>
+      <span>Pontos: <span id="score">0</span></span>
+      <span>Tempo: <span id="timer">00:00</span></span>
+      <span>Nível: <span id="level">1</span></span>
     </div>
 
     <h2 id="stage-title">Fase 1: Fácil</h2>
@@ -69,33 +44,7 @@
 
   <!-- Música de fundo -->
   <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
-
-  <script>
-    // Script de controle de música
-    const musicBtn = document.getElementById("toggle-music-btn");
-    const bgMusic = document.getElementById("bg-music");
-
-    let musicPlaying = false;
-
-    window.addEventListener("load", () => {
-      bgMusic.volume = 0.3;
-      bgMusic.play();
-      musicPlaying = true;
-      musicBtn.textContent = "🔊 Música Ligada";
-    });
-
-    musicBtn.addEventListener("click", () => {
-      if (musicPlaying) {
-        bgMusic.pause();
-        musicBtn.textContent = "🎶 Música Desligada";
-      } else {
-        bgMusic.play();
-        musicBtn.textContent = "🔊 Música Ligada";
-      }
-      musicPlaying = !musicPlaying;
-    });
-  </script>
-
+  
   <script src="script.js"></script>
 </body>
 </html>
