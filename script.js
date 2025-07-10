@@ -1,3 +1,4 @@
+// script.js
 const emojisPorFase = [  
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
@@ -28,8 +29,6 @@ const canvas = document.getElementById("shareCanvas");
 const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
-
-// Música de fundo
 const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
 let musicaTocando = false;
@@ -40,7 +39,7 @@ toggleMusicBtn.addEventListener("click", () => {
     toggleMusicBtn.textContent = "🔇 Música Desligada";
     musicaTocando = false;
   } else {
-    bgMusic.play().catch(e => console.log("Erro ao tocar música:", e));
+    bgMusic.play().catch(() => {});
     toggleMusicBtn.textContent = "🔊 Música Ligada";
     musicaTocando = true;
   }
@@ -60,8 +59,8 @@ function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
-  movesSpan.textContent = jogadas;
   tempo = 0;
+  movesSpan.textContent = jogadas;
   timerSpan.textContent = "00:00";
   atualizarTituloFase();
   atualizarPontuacao(0);
@@ -98,14 +97,7 @@ function criarCarta(emoji, index) {
   carta.className = "card";
   carta.dataset.emoji = emoji;
   carta.dataset.index = index;
-
-  carta.innerHTML = `
-    <div class="card-inner">
-      <div class="card-front"><span class="emoji">${emoji}</span></div>
-      <div class="card-back">❓</div>
-    </div>
-  `;
-
+  carta.textContent = "❓";
   carta.addEventListener("click", virarCarta);
   return carta;
 }
@@ -125,6 +117,7 @@ function virarCarta() {
   if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
 
   this.classList.add("flip");
+  this.textContent = this.dataset.emoji;
   cartasSelecionadas.push(this);
 
   if (cartasSelecionadas.length === 2) {
@@ -153,7 +146,10 @@ function virarCarta() {
     } else {
       soundError.play();
       lockBoardTemporariamente(() => {
-        cartasSelecionadas.forEach(carta => carta.classList.remove("flip"));
+        c1.classList.remove("flip");
+        c2.classList.remove("flip");
+        c1.textContent = "❓";
+        c2.textContent = "❓";
         cartasSelecionadas = [];
       }, 900);
     }
@@ -202,7 +198,6 @@ function gerarImagemPartilha() {
   const ctx = canvas.getContext("2d");
   canvas.width = 500;
   canvas.height = 260;
-
   ctx.fillStyle = "#FFE59A";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -234,12 +229,11 @@ nextBtn.addEventListener("click", () => {
 });
 
 restartBtn.addEventListener("click", () => {
-  score = 0;
   faseAtual = 0;
+  score = 0;
   iniciarJogo();
 });
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
-// Iniciar
 iniciarJogo();
