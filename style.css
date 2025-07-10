@@ -1,7 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #7b2ff7, #f107a3);
-  color: #fff;
+  background: linear-gradient(to right, #fff176, #ffca28); /* gradiente amarelo moderno */
+  color: #333;
   margin: 0;
   padding: 0;
   display: flex;
