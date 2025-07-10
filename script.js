@@ -19,11 +19,11 @@ const fases = [
   { pares: 3 }, { pares: 4 }, { pares: 6 }, { pares: 8 }, { pares: 10 }
 ];
 
-const emojis = ["🐤", "🎵", "🌟", "🌻", "🍌", "🧃", "💜", "🐝", "🌞", "🍉"];
+const emojis = ["🦜", "🎵", "🌟", "🌻", "🍌", "🧃", "💜", "🐝", "🌞", "🍉"];
 
-const somAcerto = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_21f6907c24.mp3");
-const somErro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/22/audio_69a22c31f8.mp3");
-const somVitoria = new Audio("https://cdn.pixabay.com/download/audio/2022/03/24/audio_75582b7c4d.mp3");
+const somAcerto = new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_9628f7bfc2.mp3");
+const somErro = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_d53b0b1c4d.mp3");
+const somVitoria = new Audio("https://cdn.pixabay.com/audio/2022/03/24/audio_6c17534cb1.mp3");
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -52,7 +52,7 @@ function startGame() {
     card.classList.add("card");
     card.dataset.emoji = emoji;
     card.dataset.index = i;
-    card.innerText = "🐤"; // emoji virado para baixo
+    card.innerText = "🦜";
     card.onclick = () => flipCard(card);
     board.appendChild(card);
   });
@@ -102,8 +102,8 @@ function flipCard(card) {
       mistakes++;
       mistakesDisplay.innerText = mistakes;
       setTimeout(() => {
-        c1.innerText = "🐤";
-        c2.innerText = "🐤";
+        c1.innerText = "🦜";
+        c2.innerText = "🦜";
         flippedCards = [];
       }, 800);
     }
