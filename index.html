@@ -1,100 +1,10 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Desafio Pico-Pico</title>
-  <link rel="stylesheet" href="style.css"/>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Comic Sans MS', sans-serif;
-      background: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .container {
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      padding: 30px;
-      max-width: 450px;
-      width: 100%;
-      text-align: center;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      color: #f57c00;
-      text-shadow: 1px 1px 0 #fff;
-    }
-
-    .score-panel {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin: 15px 0;
-    }
-
-    #game-board {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .card {
-      width: 70px;
-      height: 70px;
-      background: url('card-back.png') center/cover no-repeat;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: transform 0.3s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card.open {
-      background: #fff;
-      transform: rotateY(180deg);
-    }
-
-    .card img {
-      width: 100%;
-      height: 100%;
-      border-radius: 15px;
-    }
-
-    button {
-      margin: 10px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 10px;
-      background-color: #ff9800;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #e67e22;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -104,34 +14,34 @@
     </header>
 
     <div class="score-panel">
-      <div>Jogadas: <span id="moves">0</span></div>
-      <div>Pontos: <span id="score">0</span></div>
-      <div>Tempo: <span id="timer">00:00</span></div>
-      <div>Nível: <span id="level">1</span></div>
+      <span>Jogadas: <span id="moves">0</span></span>
+      <span>Pontos: <span id="score">0</span></span>
+      <span>Tempo: <span id="timer">00:00</span></span>
+      <span>Nível: <span id="level">1</span></span>
     </div>
 
     <h2 id="stage-title">Fase 1: Fácil</h2>
 
     <div id="game-board" class="game-board"></div>
 
-    <button id="next-button" class="hidden">Próxima Fase</button>
     <button id="restart-button">Reiniciar</button>
+    <button id="next-button" class="hidden">Próxima Fase</button>
     <button id="share-button" class="hidden">Partilhar Resultado</button>
+    <button id="toggle-music-btn">🔇 Música Desligada</button>
 
-    <canvas id="shareCanvas" class="hidden"></canvas>
+    <canvas id="shareCanvas"></canvas>
 
     <div id="ranking" class="hidden">
-      <h3>🏅 Ranking Top 10</h3>
-      <ol id="ranking-list"></ol>
+      <h3>🏅 Top 10 Jogadores</h3>
+      <ul id="ranking-list"></ul>
     </div>
-
-    <button id="toggle-music-btn" style="margin-top: 15px;">🔊 Música Ligada</button>
   </div>
 
-  <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
-  <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
-  <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
-  <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
+  <!-- Sons -->
+  <audio id="sound-match" src="sounds/match.mp3"></audio>
+  <audio id="sound-error" src="sounds/error.mp3"></audio>
+  <audio id="sound-win" src="sounds/win.mp3"></audio>
+  <audio id="bg-music" src="sounds/music.mp3" loop></audio>
 
   <script src="script.js"></script>
 </body>
