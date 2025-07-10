@@ -1,3 +1,3 @@
-# 💥 Jogo da Memória do Pico-Pico
+# Desafio Pico-Pico
 
-**O Pico-Pico vai testar a tua memória!!** 
+**Jogo da Memória – Teste os seus limites!** 
