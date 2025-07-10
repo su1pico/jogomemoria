@@ -25,10 +25,36 @@ const rankingList = document.getElementById("ranking-list");
 const shareBtn = document.getElementById("share-button");
 const canvas = document.getElementById("shareCanvas");
 
-// Sons
 const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
+
+// Música de fundo e botão
+const bgMusic = document.getElementById("bg-music");
+const toggleMusicBtn = document.getElementById("toggle-music-btn");
+let musicaTocando = false;
+
+toggleMusicBtn.addEventListener("click", () => {
+  if (musicaTocando) {
+    bgMusic.pause();
+    toggleMusicBtn.textContent = "🔇 Música Desligada";
+    musicaTocando = false;
+  } else {
+    bgMusic.play().catch(e => console.log("Erro ao tocar música:", e));
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+    musicaTocando = true;
+  }
+});
+
+window.addEventListener("load", () => {
+  bgMusic.play().then(() => {
+    musicaTocando = true;
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+  }).catch(() => {
+    musicaTocando = false;
+    toggleMusicBtn.textContent = "🔇 Música Desligada";
+  });
+});
 
 function iniciarJogo() {
   cartasSelecionadas = [];
@@ -41,6 +67,9 @@ function iniciarJogo() {
   atualizarPontuacao(0);
   iniciarTimer();
   gerarCartas();
+  rankingEl.classList.add("hidden");
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
 }
 
 function iniciarTimer() {
@@ -95,9 +124,7 @@ function virarCarta() {
     const [c1, c2] = cartasSelecionadas;
 
     if (c1.dataset.emoji === c2.dataset.emoji) {
-      soundMatch.currentTime = 0;
       soundMatch.play();
-
       c1.classList.add("matched");
       c2.classList.add("matched");
       cartasViradas += 2;
@@ -105,9 +132,7 @@ function virarCarta() {
 
       if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
         clearInterval(timer);
-        soundWin.currentTime = 0;
         soundWin.play();
-
         const pontosGanhos = calcularPontuacao();
         atualizarPontuacao(score + pontosGanhos);
         salvarRanking();
@@ -116,9 +141,7 @@ function virarCarta() {
         shareBtn.classList.remove("hidden");
       }
     } else {
-      soundError.currentTime = 0;
       soundError.play();
-
       setTimeout(() => {
         c1.classList.remove("flipped");
         c2.classList.remove("flipped");
@@ -193,7 +216,6 @@ nextBtn.addEventListener("click", () => {
     score = 0;
   }
   iniciarJogo();
-  
   nextBtn.classList.add("hidden");
   shareBtn.classList.add("hidden");
 });
@@ -210,24 +232,3 @@ shareBtn.addEventListener("click", gerarImagemPartilha);
 
 // Início automático
 iniciarJogo();
-const musicBtn = document.getElementById("toggle-music");
-const bgMusic = document.getElementById("bg-music");
-
-bgMusic.volume = 0.3;
-
-// Inicia a música após primeira interação do utilizador
-document.body.addEventListener("click", () => {
-  if (bgMusic.paused) {
-    bgMusic.play().catch(() => {});
-  }
-}, { once: true });
-
-musicBtn.addEventListener("click", () => {
-  if (bgMusic.paused) {
-    bgMusic.play();
-    musicBtn.textContent = "🎵 Música: ON";
-  } else {
-    bgMusic.pause();
-    musicBtn.textContent = "🎵 Música: OFF";
-  }
-});
