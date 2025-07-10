@@ -72,7 +72,7 @@ function flipCard(card) {
       c1.classList.add("matched");
       c2.classList.add("matched");
       matchedPairs++;
-      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2021/09/20/audio_5ce240f2f5.mp3").play();
+      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_21f6907c24.mp3").play();
       flippedCards = [];
 
       if (matchedPairs === totalPairs) {
