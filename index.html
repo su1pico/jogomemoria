@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -27,7 +27,6 @@
     <button id="next-button" class="hidden">Próxima Fase</button>
     <button id="restart-button">Reiniciar</button>
     <button id="share-button" class="hidden">Partilhar Resultado</button>
-    <button id="music-toggle" title="Ligar/Desligar música">🎵</button>
 
     <canvas id="shareCanvas" class="hidden"></canvas>
 
@@ -35,13 +34,18 @@
       <h3>🏅 Ranking Top 10</h3>
       <ol id="ranking-list"></ol>
     </div>
+
+    <!-- Botão para ligar/desligar música -->
+    <button id="toggle-music-btn" style="margin-top: 15px;">🔊 Música Ligada</button>
   </div>
 
   <!-- Sons -->
   <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
   <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
   <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
-  <audio id="background-music" src="musica_fundo.mp3" preload="auto" loop></audio>
+
+  <!-- Música de fundo -->
+  <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
 
   <!-- Script principal -->
   <script src="script.js"></script>
