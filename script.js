@@ -193,6 +193,7 @@ nextBtn.addEventListener("click", () => {
     score = 0;
   }
   iniciarJogo();
+  
   nextBtn.classList.add("hidden");
   shareBtn.classList.add("hidden");
 });
