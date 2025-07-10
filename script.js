@@ -1,222 +1,222 @@
-// Variáveis globais
-const gameBoard = document.getElementById('game-board');
-const movesCounter = document.getElementById('moves');
-const scoreCounter = document.getElementById('score');
-const timerElement = document.getElementById('timer');
-const levelElement = document.getElementById('level');
-const nextButton = document.getElementById('next-button');
-const restartButton = document.getElementById('restart-button');
-const shareButton = document.getElementById('share-button');
-const musicToggle = document.getElementById('music-toggle');
-
-const soundMatch = document.getElementById('sound-match');
-const soundError = document.getElementById('sound-error');
-const soundWin = document.getElementById('sound-win');
-const backgroundMusic = document.getElementById('background-music');
-
-let cards = [];
-let flippedCards = [];
-let matchedPairs = 0;
-let moves = 0;
-let score = 0;
-let timer;
-let secondsElapsed = 0;
-let level = 1;
-let isMusicPlaying = false;
-
-// Emojis para as cartas (mantém igual)
-const emojis = [
-  '🐥', '🦉', '🦜', '🦢', '🦆', '🦚', '🦃', '🦅', '🐦', '🐧',
-  '🌵', '🌴', '🍀', '🌿', '🍁', '🍄', '🌸', '🌻', '🌺', '🌼',
+const emojisPorFase = [ 
+  ["🍎", "🍌", "🍇", "🍉"],
+  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
 ];
 
-// Inicia o jogo
-function initGame() {
-  level = 1;
-  resetGame();
-  setupLevel(level);
-  updateLevelText();
-  setupMusic();
+let faseAtual = 0;
+let cartasSelecionadas = [];
+let cartasViradas = 0;
+let jogadas = 0;
+let score = 0;
+let timer;
+let tempo = 0;
+
+const board = document.getElementById("game-board");
+const stageTitle = document.getElementById("stage-title");
+const movesSpan = document.getElementById("moves");
+const scoreSpan = document.getElementById("score");
+const levelSpan = document.getElementById("level");
+const timerSpan = document.getElementById("timer");
+const nextBtn = document.getElementById("next-button");
+const restartBtn = document.getElementById("restart-button");
+const rankingEl = document.getElementById("ranking");
+const rankingList = document.getElementById("ranking-list");
+const shareBtn = document.getElementById("share-button");
+const canvas = document.getElementById("shareCanvas");
+
+const soundMatch = document.getElementById("sound-match");
+const soundError = document.getElementById("sound-error");
+const soundWin = document.getElementById("sound-win");
+const bgMusic = document.getElementById("bg-music");
+const toggleMusicBtn = document.getElementById("toggle-music-btn");
+
+// Iniciar música de fundo automaticamente em loop (silenciosa para mobile até clicar)
+bgMusic.volume = 0.15;
+bgMusic.play().catch(() => { /* autoplay bloqueado, espera clique */ });
+let musicaLigada = true;
+
+toggleMusicBtn.addEventListener("click", () => {
+  if (musicaLigada) {
+    bgMusic.pause();
+    toggleMusicBtn.textContent = "🔇 Música Desligada";
+  } else {
+    bgMusic.play();
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+  }
+  musicaLigada = !musicaLigada;
+});
+
+function iniciarJogo() {
+  cartasSelecionadas = [];
+  cartasViradas = 0;
+  jogadas = 0;
+  movesSpan.textContent = jogadas;
+  tempo = 0;
+  timerSpan.textContent = "00:00";
+  atualizarTituloFase();
+  atualizarPontuacao(0);
+  iniciarTimer();
+  gerarCartas();
 }
 
-// Configura o nível (nº de pares)
-function setupLevel(level) {
-  matchedPairs = 0;
-  moves = 0;
-  score = 0;
-  secondsElapsed = 0;
+function iniciarTimer() {
   clearInterval(timer);
-
-  movesCounter.textContent = moves;
-  scoreCounter.textContent = score;
-  timerElement.textContent = '00:00';
-  levelElement.textContent = level;
-
-  // Define número pares por nível
-  let pairs;
-  if(level === 1) pairs = 8;
-  else if(level === 2) pairs = 12;
-  else pairs = 16;
-
-  // Pega os emojis só para o nível
-  const selectedEmojis = emojis.slice(0, pairs);
-  cards = shuffle([...selectedEmojis, ...selectedEmojis]);
-
-  renderBoard(cards, pairs);
-  startTimer();
-  updateGameBoardClass(level);
-  nextButton.classList.add('hidden');
-  shareButton.classList.add('hidden');
+  timer = setInterval(() => {
+    tempo++;
+    timerSpan.textContent = formatarTempo(tempo);
+  }, 1000);
 }
 
-// Renderiza o tabuleiro
-function renderBoard(cards, pairs) {
-  gameBoard.innerHTML = '';
-  cards.forEach((emoji, index) => {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.dataset.emoji = emoji;
-    card.dataset.index = index;
-    card.addEventListener('click', onCardClick);
-    gameBoard.appendChild(card);
+function formatarTempo(segundos) {
+  const min = String(Math.floor(segundos / 60)).padStart(2, "0");
+  const sec = String(segundos % 60).padStart(2, "0");
+  return `${min}:${sec}`;
+}
+
+function atualizarTituloFase() {
+  const titulos = ["Fácil", "Médio", "Intermédio", "Difícil"];
+  const emojis = emojisPorFase[faseAtual];
+  stageTitle.innerHTML = `Fase ${faseAtual + 1}: ${titulos[faseAtual] || "Avançado"}<br><small>${emojis.length * 2} cartas – Encontre ${emojis.length} pares</small>`;
+  levelSpan.textContent = faseAtual + 1;
+}
+
+function gerarCartas() {
+  board.innerHTML = "";
+  const emojis = [...emojisPorFase[faseAtual]];
+  const cartas = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+
+  cartas.forEach((emoji, index) => {
+    const carta = document.createElement("div");
+    carta.className = "card";
+    carta.dataset.emoji = emoji;
+    carta.dataset.index = index;
+    carta.addEventListener("click", virarCarta);
+    carta.textContent = "❓";
+    board.appendChild(carta);
   });
 }
 
-// Ao clicar na carta
-function onCardClick(e) {
-  const card = e.currentTarget;
-  if (
-    flippedCards.length === 2 ||
-    card.classList.contains('flipped') ||
-    card.classList.contains('matched')
-  ) return;
+function virarCarta() {
+  if (cartasSelecionadas.length === 2) return;
+  const carta = this;
+  if (carta.classList.contains("flipped")) return;
 
-  flipCard(card);
-  flippedCards.push(card);
+  carta.classList.add("flipped");
+  carta.textContent = carta.dataset.emoji;
+  cartasSelecionadas.push(carta);
 
-  if (flippedCards.length === 2) {
-    moves++;
-    movesCounter.textContent = moves;
+  if (cartasSelecionadas.length === 2) {
+    jogadas++;
+    movesSpan.textContent = jogadas;
+    const [c1, c2] = cartasSelecionadas;
 
-    if (flippedCards[0].dataset.emoji === flippedCards[1].dataset.emoji) {
-      // Acertou par
-      matchedPairs++;
-      score += 10;
-      scoreCounter.textContent = score;
+    if (c1.dataset.emoji === c2.dataset.emoji) {
       soundMatch.play();
+      c1.classList.add("matched");
+      c2.classList.add("matched");
+      cartasViradas += 2;
+      cartasSelecionadas = [];
 
-      flippedCards.forEach(c => c.classList.add('matched'));
-      flippedCards = [];
-
-      if (matchedPairs === cards.length / 2) {
-        // Ganhou o nível
-        soundWin.play();
+      if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
         clearInterval(timer);
-        nextButton.classList.remove('hidden');
-        shareButton.classList.remove('hidden');
+        soundWin.play();
+        const pontosGanhos = calcularPontuacao();
+        atualizarPontuacao(score + pontosGanhos);
+        salvarRanking();
+        mostrarRanking();
+        nextBtn.classList.remove("hidden");
+        shareBtn.classList.remove("hidden");
       }
     } else {
-      // Errou par
       soundError.play();
       setTimeout(() => {
-        flippedCards.forEach(c => c.classList.remove('flipped'));
-        flippedCards = [];
-      }, 1000);
+        c1.classList.remove("flipped");
+        c2.classList.remove("flipped");
+        c1.textContent = "❓";
+        c2.textContent = "❓";
+        cartasSelecionadas = [];
+      }, 800);
     }
   }
 }
 
-// Virar a carta (mostrar emoji)
-function flipCard(card) {
-  card.classList.add('flipped');
-  card.textContent = card.dataset.emoji;
+function calcularPontuacao() {
+  const base = 1000;
+  const eficiencia = Math.max(1, emojisPorFase[faseAtual].length * 2 / jogadas);
+  const tempoFactor = Math.max(1, 60 / (tempo || 1));
+  return Math.round(base * eficiencia * tempoFactor);
 }
 
-// Timer
-function startTimer() {
-  clearInterval(timer);
-  timer = setInterval(() => {
-    secondsElapsed++;
-    timerElement.textContent = formatTime(secondsElapsed);
-  }, 1000);
+function atualizarPontuacao(novoScore) {
+  score = novoScore;
+  scoreSpan.textContent = score;
 }
 
-function formatTime(seconds) {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+function salvarRanking() {
+  const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
+  dados.push({ score, nivel: faseAtual + 1, tempo });
+  dados.sort((a, b) => b.score - a.score);
+  localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
 }
 
-// Botão Próxima Fase
-nextButton.addEventListener('click', () => {
-  if(level < 3) {
-    level++;
-    setupLevel(level);
-    updateLevelText();
+function mostrarRanking() {
+  rankingList.innerHTML = "";
+  const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
+  dados.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
+    rankingList.appendChild(li);
+  });
+  rankingEl.classList.remove("hidden");
+}
+
+function gerarImagemPartilha() {
+  const ctx = canvas.getContext("2d");
+  canvas.width = 500;
+  canvas.height = 260;
+
+  ctx.fillStyle = "#FFE59A";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#333";
+  ctx.font = "bold 22px 'Segoe UI', sans-serif";
+  ctx.fillText("🐥 Desafio Pico-Pico", 20, 40);
+
+  ctx.font = "18px 'Segoe UI', sans-serif";
+  ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
+  ctx.fillText(`🎯 Nível: ${faseAtual + 1}`, 20, 110);
+  ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempo)}`, 20, 140);
+  ctx.fillText(`📍 Jogadas: ${jogadas}`, 20, 170);
+
+  const url = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "desafio-pico-pico.png";
+  link.click();
+}
+
+nextBtn.addEventListener("click", () => {
+  faseAtual++;
+  if (faseAtual >= emojisPorFase.length) {
+    alert("Parabéns! Completaste todas as fases!");
+    faseAtual = 0;
+    score = 0;
   }
-  nextButton.classList.add('hidden');
-  shareButton.classList.add('hidden');
+  iniciarJogo();
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
 });
 
-// Botão Reiniciar
-restartButton.addEventListener('click', () => {
-  setupLevel(level);
-  updateLevelText();
-  nextButton.classList.add('hidden');
-  shareButton.classList.add('hidden');
+restartBtn.addEventListener("click", () => {
+  score = 0;
+  faseAtual = 0;
+  iniciarJogo();
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
 });
 
-// Atualiza texto do nível e classe para grid
-function updateLevelText() {
-  const stageTitle = document.getElementById('stage-title');
-  const levelsText = {
-    1: 'Fase 1: Fácil',
-    2: 'Fase 2: Médio',
-    3: 'Fase 3: Difícil'
-  };
-  stageTitle.textContent = levelsText[level] || 'Jogo da Memória';
-  levelElement.textContent = level;
-}
+shareBtn.addEventListener("click", gerarImagemPartilha);
 
-function updateGameBoardClass(level) {
-  gameBoard.className = 'game-board'; // reset
-  if(level === 1) gameBoard.classList.add('fase-1');
-  else if(level === 2) gameBoard.classList.add('fase-2');
-  else if(level === 3) gameBoard.classList.add('fase-3');
-}
-
-// Shuffle (embaralha array)
-function shuffle(array) {
-  let currentIndex = array.length, temporaryValue, randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
-
-// Música de fundo - setup
-function setupMusic() {
-  isMusicPlaying = false;
-  backgroundMusic.pause();
-  backgroundMusic.currentTime = 0;
-  musicToggle.textContent = '🔈'; // ícone desligado
-}
-
-// Toggle música
-musicToggle.addEventListener('click', () => {
-  if(isMusicPlaying) {
-    backgroundMusic.pause();
-    musicToggle.textContent = '🔈';
-  } else {
-    backgroundMusic.play();
-    musicToggle.textContent = '🔊';
-  }
-  isMusicPlaying = !isMusicPlaying;
-});
-
-// Inicializa tudo
-initGame();
+// Início automático
+iniciarJogo();
