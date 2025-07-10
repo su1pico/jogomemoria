@@ -1,37 +1,31 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #FFF8E1;
+  background: linear-gradient(135deg, #f8b500, #ff4e50);
   margin: 0;
   padding: 0;
-  text-align: center;
   color: #333;
 }
 
 .container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: auto;
   padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  text-align: center;
 }
 
-header {
-  margin-bottom: 20px;
-}
-
-h1 {
+header h1 {
+  margin: 0;
   font-size: 2em;
-  color: #FFA000;
 }
 
 .score-panel {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  justify-content: space-around;
+  margin: 15px 0;
   font-weight: bold;
-}
-
-#stage-title {
-  margin: 20px 0 10px;
-  font-size: 1.2em;
 }
 
 .game-board {
@@ -42,72 +36,37 @@ h1 {
 }
 
 .card {
-  background-color: #FFF3E0;
-  border: 2px solid #FFB300;
+  background: #6a00f4;
+  color: white;
   font-size: 2em;
   padding: 20px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.3s ease;
-  border-radius: 10px;
-  user-select: none;
+  transition: 0.3s;
 }
 
-.card.flipped,
-.card.matched {
-  background-color: #FFD54F;
+.card.revealed {
+  background: #ffffff;
+  color: #6a00f4;
+  border: 2px solid #6a00f4;
 }
 
 button {
   margin: 10px 5px;
-  padding: 10px 15px;
-  font-size: 1em;
-  background-color: #FFB300;
-  color: white;
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  background: #6a00f4;
+  color: white;
+  font-size: 1em;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: #FFA000;
+  background: #4e00c0;
 }
 
 .hidden {
   display: none;
-}
-
-#ranking {
-  margin-top: 20px;
-  background-color: #FFF3E0;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-#ranking-list {
-  list-style: none;
-  padding: 0;
-}
-
-#ranking-list li {
-  text-align: left;
-  margin: 5px 0;
-}
-
-/* Botão de música */
-#toggle-music-btn {
-  display: inline-block;
-  background-color: #FFD54F;
-  color: #333;
-  font-weight: bold;
-  padding: 8px 14px;
-  margin-top: 15px;
-  border: 2px solid #FFB300;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#toggle-music-btn:hover {
-  background-color: #FFCA28;
 }
