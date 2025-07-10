@@ -19,7 +19,7 @@ const fases = [
   { pares: 3 }, { pares: 4 }, { pares: 6 }, { pares: 8 }, { pares: 10 }
 ];
 
-const emojis = ["🐤", "🎵", "🌻", "🍌", "🧃", "🐸", "🦜", "☀️", "🍉", "💛", "📀", "🍋"];
+const emojis = ["🐤", "🎵", "🌟", "🌻", "🍌", "🧃", "💜", "🐝", "🌞", "🍉"];
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -72,7 +72,7 @@ function flipCard(card) {
       c1.classList.add("matched");
       c2.classList.add("matched");
       matchedPairs++;
-      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/10/31/audio_d49f8312ce.mp3").play();
+      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2021/09/20/audio_5ce240f2f5.mp3").play();
       flippedCards = [];
 
       if (matchedPairs === totalPairs) {
