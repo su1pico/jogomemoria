@@ -4,7 +4,6 @@ let scoreDisplay = document.getElementById("score");
 let mistakesDisplay = document.getElementById("mistakes");
 let timerDisplay = document.getElementById("timer");
 let rankingList = document.getElementById("ranking-list");
-let nextLevelBtn = document.getElementById("nextLevel");
 
 let level = 1;
 let score = 0;
@@ -17,14 +16,10 @@ let totalPairs = 3;
 let sonsAtivos = true;
 
 const fases = [
-  { pares: 3, titulo: "Fácil" },
-  { pares: 4, titulo: "Iniciante" },
-  { pares: 6, titulo: "Intermédio" },
-  { pares: 8, titulo: "Avançado" },
-  { pares: 10, titulo: "Mestre" }
+  { pares: 3 }, { pares: 4 }, { pares: 6 }, { pares: 8 }, { pares: 10 }
 ];
 
-const emojis = ["🍕", "🐱", "🚗", "🎮", "🎉", "🌈", "🔥", "⚽", "🍀", "🧠", "🐶", "🎧", "🧩", "📱", "🚀", "🥳"];
+const emojis = ["🐤", "🎵", "🌻", "🍌", "🧃", "🐸", "🦜", "☀️", "🍉", "💛", "📀", "🍋"];
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -53,7 +48,7 @@ function startGame() {
     card.classList.add("card");
     card.dataset.emoji = emoji;
     card.dataset.index = i;
-    card.innerText = "❓";
+    card.innerText = "🐤";
     card.onclick = () => flipCard(card);
     board.appendChild(card);
   });
@@ -77,7 +72,7 @@ function flipCard(card) {
       c1.classList.add("matched");
       c2.classList.add("matched");
       matchedPairs++;
-      if (sonsAtivos) new Audio("https://www.soundjay.com/buttons/sounds/button-4.mp3").play();
+      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/10/31/audio_d49f8312ce.mp3").play();
       flippedCards = [];
 
       if (matchedPairs === totalPairs) {
@@ -97,12 +92,12 @@ function flipCard(card) {
         }, 800);
       }
     } else {
-      if (sonsAtivos) new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3").play();
+      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d53b0b1c4d.mp3").play();
       mistakes++;
       mistakesDisplay.innerText = mistakes;
       setTimeout(() => {
-        c1.innerText = "❓";
-        c2.innerText = "❓";
+        c1.innerText = "🐤";
+        c2.innerText = "🐤";
         flippedCards = [];
       }, 800);
     }
