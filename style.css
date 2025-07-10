@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #fff176, #ffca28); /* gradiente amarelo moderno */
+  background: linear-gradient(to right, #fff176, #ffca28);
   color: #333;
   margin: 0;
   padding: 0;
@@ -10,14 +10,14 @@ body {
 }
 
 .game-container {
-  background-color: #ffffff15;
+  background-color: #ffffffc0;
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 30px;
   margin-top: 40px;
   width: 90%;
   max-width: 800px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 header input {
@@ -29,6 +29,8 @@ header input {
   text-align: center;
   border: none;
   border-radius: 8px;
+  background: #fffde7;
+  color: #333;
 }
 
 .scoreboard {
@@ -50,7 +52,7 @@ header input {
 .card {
   width: 60px;
   height: 60px;
-  background: #2b2d42;
+  background: #f48fb1;
   border-radius: 12px;
   display: flex;
   justify-content: center;
@@ -58,12 +60,12 @@ header input {
   font-size: 28px;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: all 0.3s ease;
 }
 
 .card.flipped, .card.matched {
-  background-color: #00f0ff;
+  background-color: #4dd0e1;
   color: #000;
   transform: scale(1.1);
 }
@@ -100,7 +102,7 @@ header input {
 }
 
 .ranking li {
-  background: #ffffff22;
+  background: #ffffff88;
   margin: 5px 0;
   padding: 10px;
   border-radius: 8px;
