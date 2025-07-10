@@ -29,33 +29,6 @@ const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
 
-// Música de fundo e botão
-const bgMusic = document.getElementById("bg-music");
-const toggleMusicBtn = document.getElementById("toggle-music-btn");
-let musicaTocando = false;
-
-toggleMusicBtn.addEventListener("click", () => {
-  if (musicaTocando) {
-    bgMusic.pause();
-    toggleMusicBtn.textContent = "🔇 Música Desligada";
-    musicaTocando = false;
-  } else {
-    bgMusic.play().catch(e => console.log("Erro ao tocar música:", e));
-    toggleMusicBtn.textContent = "🔊 Música Ligada";
-    musicaTocando = true;
-  }
-});
-
-window.addEventListener("load", () => {
-  bgMusic.play().then(() => {
-    musicaTocando = true;
-    toggleMusicBtn.textContent = "🔊 Música Ligada";
-  }).catch(() => {
-    musicaTocando = false;
-    toggleMusicBtn.textContent = "🔇 Música Desligada";
-  });
-});
-
 function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
@@ -67,9 +40,6 @@ function iniciarJogo() {
   atualizarPontuacao(0);
   iniciarTimer();
   gerarCartas();
-  rankingEl.classList.add("hidden");
-  nextBtn.classList.add("hidden");
-  shareBtn.classList.add("hidden");
 }
 
 function iniciarTimer() {
@@ -104,7 +74,10 @@ function gerarCartas() {
     carta.dataset.emoji = emoji;
     carta.dataset.index = index;
     carta.addEventListener("click", virarCarta);
-    carta.textContent = "❓";
+
+    // Define a capa da carta como imagem do Pico-Pico
+    carta.innerHTML = `<img src="picopico-face.png" alt="Pico-Pico" class="card-cover">`;
+
     board.appendChild(carta);
   });
 }
@@ -115,6 +88,11 @@ function virarCarta() {
   if (carta.classList.contains("flipped")) return;
 
   carta.classList.add("flipped");
+
+  // Esconde a capa (imagem) e mostra o emoji
+  const capa = carta.querySelector(".card-cover");
+  if (capa) capa.style.display = "none";
+
   carta.textContent = carta.dataset.emoji;
   cartasSelecionadas.push(carta);
 
@@ -145,8 +123,11 @@ function virarCarta() {
       setTimeout(() => {
         c1.classList.remove("flipped");
         c2.classList.remove("flipped");
-        c1.textContent = "❓";
-        c2.textContent = "❓";
+
+        // Voltar a mostrar a capa (imagem)
+        c1.innerHTML = `<img src="picopico-face.png" alt="Pico-Pico" class="card-cover">`;
+        c2.innerHTML = `<img src="picopico-face.png" alt="Pico-Pico" class="card-cover">`;
+
         cartasSelecionadas = [];
       }, 800);
     }
