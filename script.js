@@ -209,3 +209,24 @@ shareBtn.addEventListener("click", gerarImagemPartilha);
 
 // Início automático
 iniciarJogo();
+const musicBtn = document.getElementById("toggle-music");
+const bgMusic = document.getElementById("bg-music");
+
+bgMusic.volume = 0.3;
+
+// Inicia a música após primeira interação do utilizador
+document.body.addEventListener("click", () => {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+  }
+}, { once: true });
+
+musicBtn.addEventListener("click", () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    musicBtn.textContent = "🎵 Música: ON";
+  } else {
+    bgMusic.pause();
+    musicBtn.textContent = "🎵 Música: OFF";
+  }
+});
