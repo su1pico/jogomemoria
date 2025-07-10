@@ -1,0 +1,123 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #7b2ff7, #f107a3);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-container {
+  background-color: #ffffff15;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 30px;
+  margin-top: 40px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+header input {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  font-size: 1.4em;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  font-weight: bold;
+  font-size: 1.2em;
+  flex-wrap: wrap;
+}
+
+#board {
+  display: grid;
+  gap: 12px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.card {
+  width: 60px;
+  height: 60px;
+  background: #2b2d42;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.card.flipped, .card.matched {
+  background-color: #00f0ff;
+  color: #000;
+  transform: scale(1.1);
+}
+
+#nextLevel {
+  padding: 12px 24px;
+  font-size: 1em;
+  background: #00c853;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  transition: background 0.3s ease;
+}
+
+#nextLevel:hover {
+  background: #00b341;
+}
+
+.ranking {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.ranking h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.ranking ol {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking li {
+  background: #ffffff22;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+button {
+  margin: 10px;
+  font-size: 1em;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ff4081;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #e91e63;
+}
