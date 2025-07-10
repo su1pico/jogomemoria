@@ -2,45 +2,46 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Desafio Pico-Pico</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🐥 Desafio Pico-Pico</h1>
+      <h1>Desafio Pico-Pico</h1>
       <p>Jogo da Memória – Teste os seus limites!</p>
     </header>
 
     <div class="score-panel">
-      <div class="score">🏆 <span id="score">0</span> Pontuação</div>
-      <div class="level">🎯 <span id="level">1</span> Nível</div>
-      <div class="moves">🎮 <span id="moves">0</span> Jogadas</div>
-      <div class="timer">⏱️ <span id="timer">00:00</span> Tempo</div>
+      <div>Jogadas: <span id="moves">0</span></div>
+      <div>Pontos: <span id="score">0</span></div>
+      <div>Tempo: <span id="timer">00:00</span></div>
+      <div>Nível: <span id="level">1</span></div>
     </div>
 
-    <h2 id="stage-title">Fase 1: Fácil<br><small>8 cartas – Encontre 4 pares</small></h2>
+    <h2 id="stage-title">Fase 1: Fácil</h2>
 
-    <div class="game-board" id="game-board"></div>
+    <div id="game-board" class="game-board"></div>
 
-    <button id="next-button" class="hidden">➡️ Próxima Fase</button>
-    <button id="restart-button">🔄 Reiniciar</button>
+    <button id="next-button" class="hidden">Próxima Fase</button>
+    <button id="restart-button">Reiniciar</button>
+    <button id="share-button" class="hidden">Partilhar Resultado</button>
+
+    <canvas id="shareCanvas" class="hidden"></canvas>
 
     <div id="ranking" class="hidden">
       <h3>🏅 Ranking Top 10</h3>
       <ol id="ranking-list"></ol>
     </div>
-
-    <canvas id="shareCanvas" class="hidden"></canvas>
-    <button id="share-button" class="hidden">📤 Partilhar Resultado</button>
   </div>
 
   <!-- Sons -->
-  <audio id="sound-match" src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_4fb8bfe77f.mp3?filename=correct-2-46134.mp3"></audio>
-  <audio id="sound-error" src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_71310f1327.mp3?filename=error-126627.mp3"></audio>
-  <audio id="sound-win" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_30c8188db7.mp3?filename=win-sound-2-102733.mp3"></audio>
+  <audio id="sound-match" src="https://cdn.pixabay.com/audio/2022/03/15/audio_aa1a50aa1c.mp3"></audio>
+  <audio id="sound-error" src="https://cdn.pixabay.com/audio/2022/03/15/audio_74c93c58f7.mp3"></audio>
+  <audio id="sound-win" src="https://cdn.pixabay.com/audio/2022/03/15/audio_d80b3fb0ba.mp3"></audio>
 
+  <!-- Script principal -->
   <script src="script.js"></script>
 </body>
 </html>
