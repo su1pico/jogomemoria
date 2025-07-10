@@ -1,146 +1,196 @@
-let board = document.getElementById("board");
-let levelDisplay = document.getElementById("level");
-let scoreDisplay = document.getElementById("score");
-let mistakesDisplay = document.getElementById("mistakes");
-let timerDisplay = document.getElementById("timer");
-let rankingList = document.getElementById("ranking-list");
-
-let level = 1;
-let score = 0;
-let mistakes = 0;
-let time = 0;
-let timerInterval;
-let flippedCards = [];
-let matchedPairs = 0;
-let totalPairs = 3;
-let sonsAtivos = true;
-
-const fases = [
-  { pares: 3 }, { pares: 4 }, { pares: 6 }, { pares: 8 }, { pares: 10 }
+const emojisPorFase = [
+  ["🍎", "🍌", "🍇", "🍉"],
+  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
 ];
 
-const emojis = ["🦜", "🎵", "🌟", "🌻", "🍌", "🧃", "💜", "🐝", "🌞", "🍉"];
+let faseAtual = 0;
+let cartasSelecionadas = [];
+let cartasViradas = 0;
+let jogadas = 0;
+let score = 0;
+let timer;
+let tempo = 0;
 
-const somAcerto = new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_9628f7bfc2.mp3");
-const somErro = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_d53b0b1c4d.mp3");
-const somVitoria = new Audio("https://cdn.pixabay.com/audio/2022/03/24/audio_6c17534cb1.mp3");
+const board = document.getElementById("game-board");
+const stageTitle = document.getElementById("stage-title");
+const movesSpan = document.getElementById("moves");
+const scoreSpan = document.getElementById("score");
+const levelSpan = document.getElementById("level");
+const timerSpan = document.getElementById("timer");
+const nextBtn = document.getElementById("next-button");
+const restartBtn = document.getElementById("restart-button");
+const rankingEl = document.getElementById("ranking");
+const rankingList = document.getElementById("ranking-list");
+const shareBtn = document.getElementById("share-button");
+const canvas = document.getElementById("shareCanvas");
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+const soundMatch = document.getElementById("sound-match");
+const soundError = document.getElementById("sound-error");
+const soundWin = document.getElementById("sound-win");
+
+function iniciarJogo() {
+  cartasSelecionadas = [];
+  cartasViradas = 0;
+  jogadas = 0;
+  movesSpan.textContent = jogadas;
+  tempo = 0;
+  timerSpan.textContent = "00:00";
+  atualizarTituloFase();
+  atualizarPontuacao(0);
+  iniciarTimer();
+  gerarCartas();
 }
 
-function startGame() {
-  clearInterval(timerInterval);
-  time = 0;
-  mistakes = 0;
-  matchedPairs = 0;
-  flippedCards = [];
-
-  const fase = fases[level - 1] || fases[fases.length - 1];
-  totalPairs = fase.pares;
-
-  let cards = shuffle([...emojis].slice(0, totalPairs).flatMap(e => [e, e]));
-  board.innerHTML = "";
-  board.style.gridTemplateColumns = `repeat(${Math.ceil(Math.sqrt(totalPairs * 2))}, 1fr)`;
-
-  cards.forEach((emoji, i) => {
-    let card = document.createElement("div");
-    card.classList.add("card");
-    card.dataset.emoji = emoji;
-    card.dataset.index = i;
-    card.innerText = "🦜";
-    card.onclick = () => flipCard(card);
-    board.appendChild(card);
-  });
-
-  updateUI();
-  timerInterval = setInterval(() => {
-    time++;
-    timerDisplay.innerText = time + "s";
+function iniciarTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    tempo++;
+    const min = String(Math.floor(tempo / 60)).padStart(2, "0");
+    const sec = String(tempo % 60).padStart(2, "0");
+    timerSpan.textContent = `${min}:${sec}`;
   }, 1000);
 }
 
-function flipCard(card) {
-  if (flippedCards.length >= 2 || card.classList.contains("matched") || flippedCards.includes(card)) return;
+function atualizarTituloFase() {
+  const titulos = ["Fácil", "Médio", "Intermédio", "Difícil"];
+  const emojis = emojisPorFase[faseAtual];
+  stageTitle.innerHTML = `Fase ${faseAtual + 1}: ${titulos[faseAtual] || "Avançado"}<br><small>${emojis.length * 2} cartas – Encontre ${emojis.length} pares</small>`;
+  levelSpan.textContent = faseAtual + 1;
+}
 
-  card.innerText = card.dataset.emoji;
-  flippedCards.push(card);
+function gerarCartas() {
+  board.innerHTML = "";
+  const emojis = [...emojisPorFase[faseAtual]];
+  const cartas = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
 
-  if (flippedCards.length === 2) {
-    const [c1, c2] = flippedCards;
+  cartas.forEach((emoji, index) => {
+    const carta = document.createElement("div");
+    carta.className = "card";
+    carta.dataset.emoji = emoji;
+    carta.dataset.index = index;
+    carta.addEventListener("click", virarCarta);
+    carta.textContent = "❓";
+    board.appendChild(carta);
+  });
+}
+
+function virarCarta() {
+  if (cartasSelecionadas.length === 2) return;
+  const carta = this;
+  if (carta.classList.contains("flipped")) return;
+
+  carta.classList.add("flipped");
+  carta.textContent = carta.dataset.emoji;
+  cartasSelecionadas.push(carta);
+
+  if (cartasSelecionadas.length === 2) {
+    jogadas++;
+    movesSpan.textContent = jogadas;
+    const [c1, c2] = cartasSelecionadas;
+
     if (c1.dataset.emoji === c2.dataset.emoji) {
+      soundMatch.play();
       c1.classList.add("matched");
       c2.classList.add("matched");
-      matchedPairs++;
+      cartasViradas += 2;
+      cartasSelecionadas = [];
 
-      if (sonsAtivos) somAcerto.play();
-      flippedCards = [];
-
-      if (matchedPairs === totalPairs) {
-        clearInterval(timerInterval);
-        setTimeout(() => {
-          if (sonsAtivos) somVitoria.play();
-          const pontosFase = calcularPontuacao();
-          score += pontosFase;
-          updateRanking(score);
-          alert(`Fase concluída! Ganhou ${pontosFase} pontos.`);
-          level++;
-          if (level > fases.length) {
-            alert("Parabéns! Concluíste todas as fases!");
-            level = 1;
-            score = 0;
-          }
-          startGame();
-        }, 800);
+      if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
+        clearInterval(timer);
+        soundWin.play();
+        const pontosGanhos = calcularPontuacao();
+        atualizarPontuacao(score + pontosGanhos);
+        salvarRanking();
+        mostrarRanking();
+        nextBtn.classList.remove("hidden");
+        shareBtn.classList.remove("hidden");
       }
     } else {
-      if (sonsAtivos) somErro.play();
-      mistakes++;
-      mistakesDisplay.innerText = mistakes;
+      soundError.play();
       setTimeout(() => {
-        c1.innerText = "🦜";
-        c2.innerText = "🦜";
-        flippedCards = [];
+        c1.classList.remove("flipped");
+        c2.classList.remove("flipped");
+        c1.textContent = "❓";
+        c2.textContent = "❓";
+        cartasSelecionadas = [];
       }, 800);
     }
   }
 }
 
 function calcularPontuacao() {
-  let base = totalPairs * 100;
-  let tempoBonus = Math.max(0, 500 - time * 5);
-  let erroPenalty = mistakes * 20;
-  return Math.max(0, base + tempoBonus - erroPenalty);
+  const base = 1000;
+  const eficiencia = Math.max(1, emojisPorFase[faseAtual].length * 2 / jogadas);
+  const tempoFactor = Math.max(1, 60 / (tempo || 1));
+  return Math.round(base * eficiencia * tempoFactor);
 }
 
-function updateUI() {
-  levelDisplay.innerText = level;
-  scoreDisplay.innerText = score;
-  mistakesDisplay.innerText = mistakes;
-  timerDisplay.innerText = "0s";
-  renderRanking();
+function atualizarPontuacao(novoScore) {
+  score = novoScore;
+  scoreSpan.textContent = score;
 }
 
-function updateRanking(novosPontos) {
-  let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
-  const nome = prompt("Nome para o ranking:");
-  ranking.push({ nome, pontos: novosPontos });
-  ranking.sort((a, b) => b.pontos - a.pontos);
-  localStorage.setItem("ranking", JSON.stringify(ranking.slice(0, 10)));
+function salvarRanking() {
+  const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
+  dados.push({ score, nivel: faseAtual + 1, tempo });
+  dados.sort((a, b) => b.score - a.score);
+  localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
 }
 
-function renderRanking() {
-  let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
+function mostrarRanking() {
   rankingList.innerHTML = "";
-  ranking.forEach(({ nome, pontos }) => {
-    let li = document.createElement("li");
-    li.innerText = `${nome}: ${pontos} pts`;
+  const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
+  dados.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
     rankingList.appendChild(li);
   });
+  rankingEl.classList.remove("hidden");
 }
 
-startGame();
+function gerarImagemPartilha() {
+  const ctx = canvas.getContext("2d");
+  canvas.width = 500;
+  canvas.height = 260;
+  ctx.fillStyle = "#FFE59A";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#333";
+  ctx.font = "bold 22px Segoe UI";
+  ctx.fillText("🐥 Desafio Pico-Pico", 20, 40);
+  ctx.font = "18px Segoe UI";
+  ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
+  ctx.fillText(`🎯 Nível: ${faseAtual + 1}`, 20, 110);
+  ctx.fillText(`⏱️ Tempo: ${tempo}s`, 20, 140);
+  ctx.fillText(`📍 Jogadas: ${jogadas}`, 20, 170);
+  const url = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "desafio-pico-pico.png";
+  link.click();
+}
+
+nextBtn.addEventListener("click", () => {
+  faseAtual++;
+  if (faseAtual >= emojisPorFase.length) {
+    alert("Parabéns! Completaste todas as fases!");
+    faseAtual = 0;
+    score = 0;
+  }
+  iniciarJogo();
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
+});
+
+restartBtn.addEventListener("click", () => {
+  score = 0;
+  faseAtual = 0;
+  iniciarJogo();
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
+});
+
+shareBtn.addEventListener("click", gerarImagemPartilha);
+
+// Início automático
+iniciarJogo();
