@@ -21,6 +21,10 @@ const fases = [
 
 const emojis = ["🐤", "🎵", "🌟", "🌻", "🍌", "🧃", "💜", "🐝", "🌞", "🍉"];
 
+const somAcerto = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_21f6907c24.mp3");
+const somErro = new Audio("https://cdn.pixabay.com/download/audio/2022/03/22/audio_69a22c31f8.mp3");
+const somVitoria = new Audio("https://cdn.pixabay.com/download/audio/2022/03/24/audio_75582b7c4d.mp3");
+
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -48,7 +52,7 @@ function startGame() {
     card.classList.add("card");
     card.dataset.emoji = emoji;
     card.dataset.index = i;
-    card.innerText = "🐤";
+    card.innerText = "🐤"; // emoji virado para baixo
     card.onclick = () => flipCard(card);
     board.appendChild(card);
   });
@@ -72,12 +76,14 @@ function flipCard(card) {
       c1.classList.add("matched");
       c2.classList.add("matched");
       matchedPairs++;
-      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_21f6907c24.mp3").play();
+
+      if (sonsAtivos) somAcerto.play();
       flippedCards = [];
 
       if (matchedPairs === totalPairs) {
         clearInterval(timerInterval);
         setTimeout(() => {
+          if (sonsAtivos) somVitoria.play();
           const pontosFase = calcularPontuacao();
           score += pontosFase;
           updateRanking(score);
@@ -92,7 +98,7 @@ function flipCard(card) {
         }, 800);
       }
     } else {
-      if (sonsAtivos) new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d53b0b1c4d.mp3").play();
+      if (sonsAtivos) somErro.play();
       mistakes++;
       mistakesDisplay.innerText = mistakes;
       setTimeout(() => {
