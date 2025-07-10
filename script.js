@@ -1,4 +1,4 @@
-const emojisPorFase = [ 
+const emojisPorFase = [  
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
   ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
@@ -56,6 +56,8 @@ window.addEventListener("load", () => {
   });
 });
 
+// --- FUNÇÕES ---
+
 function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
@@ -93,34 +95,46 @@ function atualizarTituloFase() {
   levelSpan.textContent = faseAtual + 1;
 }
 
+function criarCarta(emoji, index) {
+  const carta = document.createElement("div");
+  carta.className = "card";
+  carta.dataset.emoji = emoji;
+  carta.dataset.index = index;
+
+  // Estrutura interna para flip 3D
+  carta.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front"><span class="emoji">${emoji}</span></div>
+      <div class="card-back">❓</div>
+    </div>
+  `;
+
+  carta.addEventListener("click", virarCarta);
+  return carta;
+}
+
 function gerarCartas() {
   board.innerHTML = "";
   const emojis = [...emojisPorFase[faseAtual]];
   const cartas = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
 
   cartas.forEach((emoji, index) => {
-    const carta = document.createElement("div");
-    carta.className = "card";
-    carta.dataset.emoji = emoji;
-    carta.dataset.index = index;
-    carta.addEventListener("click", virarCarta);
-    carta.textContent = "❓";
+    const carta = criarCarta(emoji, index);
     board.appendChild(carta);
   });
 }
 
 function virarCarta() {
   if (cartasSelecionadas.length === 2) return;
-  const carta = this;
-  if (carta.classList.contains("flipped")) return;
+  if (this.classList.contains("flip")) return;
 
-  carta.classList.add("flipped");
-  carta.textContent = carta.dataset.emoji;
-  cartasSelecionadas.push(carta);
+  this.classList.add("flip");
+  cartasSelecionadas.push(this);
 
   if (cartasSelecionadas.length === 2) {
     jogadas++;
     movesSpan.textContent = jogadas;
+
     const [c1, c2] = cartasSelecionadas;
 
     if (c1.dataset.emoji === c2.dataset.emoji) {
@@ -142,20 +156,26 @@ function virarCarta() {
       }
     } else {
       soundError.play();
-      setTimeout(() => {
-        c1.classList.remove("flipped");
-        c2.classList.remove("flipped");
-        c1.textContent = "❓";
-        c2.textContent = "❓";
+      lockBoardTemporariamente(() => {
+        cartasSelecionadas.forEach(carta => carta.classList.remove("flip"));
         cartasSelecionadas = [];
-      }, 800);
+      }, 900);
     }
   }
 }
 
+function lockBoardTemporariamente(callback, delay) {
+  // Bloqueia jogadas durante delay
+  board.style.pointerEvents = "none";
+  setTimeout(() => {
+    callback();
+    board.style.pointerEvents = "auto";
+  }, delay);
+}
+
 function calcularPontuacao() {
   const base = 1000;
-  const eficiencia = Math.max(1, emojisPorFase[faseAtual].length * 2 / jogadas);
+  const eficiencia = Math.max(1, (emojisPorFase[faseAtual].length * 2) / jogadas);
   const tempoFactor = Math.max(1, 60 / (tempo || 1));
   return Math.round(base * eficiencia * tempoFactor);
 }
@@ -230,5 +250,5 @@ restartBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
-// Início automático
+// Começa o jogo
 iniciarJogo();
