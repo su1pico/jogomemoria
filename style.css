@@ -1,136 +1,113 @@
-/* Reset básico */
-* {
-  box-sizing: border-box;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #FFF8E1;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  user-select: none;
+  text-align: center;
+  color: #333;
 }
 
-body {
-  background: #fff3b0; /* tom amarelo claro */
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+.container {
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
 }
 
-/* Título da fase */
-#stage-title {
-  font-size: 1.6rem;
-  text-align: center;
+header {
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  color: #FFA000;
+}
+
+.score-panel {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
-  color: #4a772b; /* verde agradável */
+  font-weight: bold;
 }
 
-#stage-title small {
-  font-weight: 400;
-  font-size: 0.85rem;
-  color: #7d9d52;
+#stage-title {
+  margin: 20px 0 10px;
+  font-size: 1.2em;
 }
 
-/* Informações do jogo */
-.info-panel {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 15px;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #557a1f;
-}
-
-.info-panel span {
-  background: #e2f0c4;
-  padding: 6px 12px;
-  border-radius: 12px;
-  box-shadow: inset 1px 1px 4px #b7d06d;
-}
-
-/* Tabuleiro de cartas */
-#game-board {
+.game-board {
   display: grid;
-  gap: 12px;
-  margin-bottom: 15px;
-  max-width: 480px;
-  width: 100%;
-  justify-content: center;
-  user-select: none;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 20px 0;
 }
 
-/* Grid responsivo conforme cartas */
 .card {
-  background: #f4f4f4;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  background-color: #FFF3E0;
+  border: 2px solid #FFB300;
+  font-size: 2em;
+  padding: 20px;
   cursor: pointer;
-  font-size: 2.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 70px;
-  transition: background-color 0.3s, transform 0.3s;
-  color: #555;
+  transition: transform 0.3s ease;
+  border-radius: 10px;
   user-select: none;
-  position: relative;
-  font-weight: 900;
 }
 
-/* Carta virada */
 .card.flipped,
 .card.matched {
-  background: #fffcdd;
-  color: #38761d;
-  cursor: default;
-  box-shadow: 0 0 8px #a3cf5f;
-  transform: scale(1.05);
+  background-color: #FFD54F;
 }
 
-/* Carta já combinada */
-.card.matched {
-  pointer-events: none;
-}
-
-/* Carta fechada: mostra "❓" */
-.card:not(.flipped):not(.matched) {
-  background-color: #a2d149; /* verde claro */
-  color: #fff;
-  font-weight: 900;
-}
-
-/* Ajustar grid para diferentes fases */
-.fase-0 #game-board {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.fase-1 #game-board {
-  grid-template-columns: repeat(6, 1fr);
-}
-
-.fase-2 #game-board {
-  grid-template-columns: repeat(8, 1fr);
-}
-
-/* Botões */
 button {
-  cursor: pointer;
-  padding: 10px 18px;
-  margin: 0 8px 20px 8px;
+  margin: 10px 5px;
+  padding: 10px 15px;
+  font-size: 1em;
+  background-color: #FFB300;
+  color: white;
   border: none;
   border-radius: 8px;
-  background-color: #557a1f;
-  color: white;
-  font-weight: 700;
-  font-size: 1rem;
-  box-shadow: 0 3px 6px rgba(85, 122, 31, 0.4);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #FFA000;
+}
+
+.hidden {
+  display: none;
+}
+
+#ranking {
+  margin-top: 20px;
+  background-color: #FFF3E0;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+#ranking-list {
+  list-style: none;
+  padding: 0;
+}
+
+#ranking-list li {
+  text-align: left;
+  margin: 5px 0;
+}
+
+/* Botão de música */
+#toggle-music-btn {
+  display: inline-block;
+  background-color: #FFD54F;
+  color: #333;
+  font-weight: bold;
+  padding: 8px 14px;
+  margin-top: 15px;
+  border: 2px solid #FFB300;
+  border-radius: 20px;
+  cursor: pointer;
   transition: background-color 0.3s ease;
-  user-select: none;
 }
 
-button:hover:not(:disabled) {
-  background-color: #4a6e19;
+#toggle-music-btn:hover {
+  background-color: #FFCA28;
 }
-
-button:disabled {
-  opacity: 0
