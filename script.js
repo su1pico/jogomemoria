@@ -1,4 +1,4 @@
-const emojisPorFase = [
+const emojisPorFase = [ 
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
   ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
@@ -25,6 +25,7 @@ const rankingList = document.getElementById("ranking-list");
 const shareBtn = document.getElementById("share-button");
 const canvas = document.getElementById("shareCanvas");
 
+// Sons
 const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
@@ -94,7 +95,9 @@ function virarCarta() {
     const [c1, c2] = cartasSelecionadas;
 
     if (c1.dataset.emoji === c2.dataset.emoji) {
+      soundMatch.currentTime = 0;
       soundMatch.play();
+
       c1.classList.add("matched");
       c2.classList.add("matched");
       cartasViradas += 2;
@@ -102,7 +105,9 @@ function virarCarta() {
 
       if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
         clearInterval(timer);
+        soundWin.currentTime = 0;
         soundWin.play();
+
         const pontosGanhos = calcularPontuacao();
         atualizarPontuacao(score + pontosGanhos);
         salvarRanking();
@@ -111,7 +116,9 @@ function virarCarta() {
         shareBtn.classList.remove("hidden");
       }
     } else {
+      soundError.currentTime = 0;
       soundError.play();
+
       setTimeout(() => {
         c1.classList.remove("flipped");
         c2.classList.remove("flipped");
