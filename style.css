@@ -1,141 +1,169 @@
-/* Reset básico */
-* {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #FFE59A; /* Fundo amarelo suave */
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Fundo geral com gradiente amarelo/laranja */
-body {
-  background: linear-gradient(135deg, #FFE259, #FFA751);
-  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: start;
-  padding: 20px;
+  min-height: 100vh;
 }
 
-/* Container principal */
 .container {
-  background: white;
-  border-radius: 20px;
-  padding: 30px 20px;
-  max-width: 500px;
-  width: 100%;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  width: 360px;
+  padding: 20px;
+  background: #fff9db;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 8px;
   text-align: center;
 }
 
-/* Títulos */
 header h1 {
-  font-size: 2rem;
-  color: #f57c00;
-  margin-bottom: 5px;
-}
-
-header p {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-/* Painel de pontuação */
-.score-panel {
-  display: flex;
-  justify-content: space-around;
-  background: #fff3cd;
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  font-weight: bold;
-  color: #6c4f00;
-}
-
-.score-panel div span {
-  font-weight: 900;
-}
-
-/* Título da fase */
-#stage-title {
-  margin: 15px 0;
-  font-size: 1.2rem;
+  margin: 0;
+  font-size: 28px;
   color: #333;
 }
 
-/* Tabuleiro */
+header p {
+  margin-top: 4px;
+  color: #666;
+  font-style: italic;
+}
+
+.score-panel {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+  font-weight: bold;
+  color: #444;
+}
+
+h2#stage-title {
+  margin-bottom: 10px;
+  color: #2e7d32;
+}
+
 .game-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-/* Cartas */
 .card {
-  background: #ffd180;
-  border-radius: 15px;
-  padding: 20px;
-  font-size: 2rem;
+  width: 70px;
+  height: 70px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  font-size: 40px;
+  line-height: 70px;
+  text-align: center;
   cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
   user-select: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-.card.flipped,
+/* Grid varia conforme a fase */
+.fase-1 .game-board {
+  grid-template-columns: repeat(4, 70px);
+}
+
+.fase-2 .game-board {
+  grid-template-columns: repeat(6, 70px);
+}
+
+.fase-3 .game-board {
+  grid-template-columns: repeat(8, 70px);
+}
+
+/* Carta virada: mostra emoji */
+.card.flipped {
+  background-color: #fff;
+  cursor: default;
+}
+
+/* Carta com par acertado */
 .card.matched {
-  background: #ffe57f;
-  transform: scale(1.1);
+  cursor: default;
+  box-shadow: 0 0 15px 3px #4caf50aa;
+  border: 2px solid #4caf50;
 }
 
-.card.hidden {
-  background: #f5f5f5;
-  color: transparent;
+/* Imagem capa do Pico-Pico */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 60px;
+  height: 60px;
+  background-image: url('pico-pico-capa.png'); /* nome do ficheiro da capa */
+  background-size: cover;
+  border-radius: 6px;
+  transition: opacity 0.3s ease;
+  opacity: 1;
   pointer-events: none;
+  z-index: 1;
+}
+
+.card.flipped::before {
+  opacity: 0;
 }
 
 /* Botões */
 button {
-  background: #ff9800;
+  background-color: #2e7d32;
   color: white;
-  padding: 10px 20px;
-  margin: 5px;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: 5px;
+  padding: 10px 18px;
+  margin: 5px;
   cursor: pointer;
-  transition: background 0.3s;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background: #f57c00;
+  background-color: #276627;
 }
 
-.hidden {
+button.hidden {
+  display: none;
+}
+
+/* Botão música */
+#music-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  line-height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: #ffca28;
+  color: #333;
+  box-shadow: 0 0 8px #ffca28aa;
+}
+
+/* Canvas de partilha invisível */
+canvas.hidden {
   display: none;
 }
 
 /* Ranking */
 #ranking {
-  margin-top: 20px;
   text-align: left;
+  margin-top: 20px;
 }
 
 #ranking h3 {
-  color: #e65100;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 #ranking-list {
-  list-style: decimal;
   padding-left: 20px;
-  color: #333;
-}
-
-/* Responsivo */
-@media (max-width: 480px) {
-  .game-board {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  color: #555;
 }
