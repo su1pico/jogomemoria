@@ -28,23 +28,32 @@ const canvas = document.getElementById("shareCanvas");
 const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
+
+// Música de fundo e botão
 const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
-
-// Iniciar música de fundo automaticamente em loop (silenciosa para mobile até clicar)
-bgMusic.volume = 0.15;
-bgMusic.play().catch(() => { /* autoplay bloqueado, espera clique */ });
-let musicaLigada = true;
+let musicaTocando = false;
 
 toggleMusicBtn.addEventListener("click", () => {
-  if (musicaLigada) {
+  if (musicaTocando) {
     bgMusic.pause();
     toggleMusicBtn.textContent = "🔇 Música Desligada";
+    musicaTocando = false;
   } else {
-    bgMusic.play();
+    bgMusic.play().catch(e => console.log("Erro ao tocar música:", e));
     toggleMusicBtn.textContent = "🔊 Música Ligada";
+    musicaTocando = true;
   }
-  musicaLigada = !musicaLigada;
+});
+
+window.addEventListener("load", () => {
+  bgMusic.play().then(() => {
+    musicaTocando = true;
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+  }).catch(() => {
+    musicaTocando = false;
+    toggleMusicBtn.textContent = "🔇 Música Desligada";
+  });
 });
 
 function iniciarJogo() {
@@ -58,6 +67,9 @@ function iniciarJogo() {
   atualizarPontuacao(0);
   iniciarTimer();
   gerarCartas();
+  rankingEl.classList.add("hidden");
+  nextBtn.classList.add("hidden");
+  shareBtn.classList.add("hidden");
 }
 
 function iniciarTimer() {
