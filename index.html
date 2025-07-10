@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -12,6 +12,9 @@
       <h1>Desafio Pico-Pico</h1>
       <p>Jogo da Memória – Teste os seus limites!</p>
     </header>
+
+    <!-- Botão para controlar a música -->
+    <button id="toggle-music">🎵 Música: ON</button>
 
     <div class="score-panel">
       <div>Jogadas: <span id="moves">0</span></div>
@@ -38,8 +41,9 @@
 
   <!-- Sons -->
   <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
-<audio id="sound-error" src="erro.mp3" preload="auto"></audio>
-<audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
+  <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
+  <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
+  <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
 
   <!-- Script principal -->
   <script src="script.js"></script>
