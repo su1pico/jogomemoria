@@ -13,9 +13,6 @@
       <p>Jogo da Memória – Teste os seus limites!</p>
     </header>
 
-    <!-- Botão para controlar a música -->
-    <button id="toggle-music">🎵 Música: ON</button>
-
     <div class="score-panel">
       <div>Jogadas: <span id="moves">0</span></div>
       <div>Pontos: <span id="score">0</span></div>
@@ -37,12 +34,17 @@
       <h3>🏅 Ranking Top 10</h3>
       <ol id="ranking-list"></ol>
     </div>
+
+    <!-- Botão para ligar/desligar música -->
+    <button id="toggle-music-btn" style="margin-top: 15px;">🔊 Música Ligada</button>
   </div>
 
   <!-- Sons -->
   <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
   <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
   <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
+
+  <!-- Música de fundo -->
   <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
 
   <!-- Script principal -->
