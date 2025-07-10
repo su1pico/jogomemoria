@@ -44,17 +44,13 @@ toggleMusicBtn.addEventListener("click", () => {
   }
 });
 
-window.addEventListener("load", () => {
-  bgMusic.play().then(() => {
-    musicaTocando = true;
-    toggleMusicBtn.textContent = "🔊 Música Ligada";
-  }).catch(() => {
-    musicaTocando = false;
-    toggleMusicBtn.textContent = "🔇 Música Desligada";
-  });
-});
-
 function iniciarJogo() {
+  if (!musicaTocando) {
+    bgMusic.play().then(() => {
+      musicaTocando = true;
+      toggleMusicBtn.textContent = "🔊 Música Ligada";
+    }).catch(() => {});
+  }
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
@@ -221,5 +217,4 @@ restartBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
-// Início
 iniciarJogo();
