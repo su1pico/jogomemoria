@@ -1,126 +1,141 @@
-body {
-  font-family: 'Comic Sans MS', 'Patrick Hand', cursive;
-  background: linear-gradient(to right, #fff176, #ffca28);
-  color: #333;
+/* Reset básico */
+* {
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.game-container {
-  background-color: #ffffffc0;
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 30px;
-  margin-top: 40px;
-  width: 90%;
-  max-width: 800px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+/* Fundo geral com gradiente amarelo/laranja */
+body {
+  background: linear-gradient(135deg, #FFE259, #FFA751);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding: 20px;
+}
+
+/* Container principal */
+.container {
+  background: white;
+  border-radius: 20px;
+  padding: 30px 20px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   text-align: center;
 }
 
+/* Títulos */
 header h1 {
-  font-size: 2.5em;
-  margin-bottom: 0.2em;
-  color: #d84315;
-  text-shadow: 2px 2px #fff59d;
+  font-size: 2rem;
+  color: #f57c00;
+  margin-bottom: 5px;
 }
 
 header p {
-  font-size: 1.4em;
-  color: #5d4037;
-  text-shadow: 1px 1px #fff59d;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
 }
 
-.scoreboard {
+/* Painel de pontuação */
+.score-panel {
   display: flex;
   justify-content: space-around;
-  margin: 20px 0;
-  font-weight: bold;
-  font-size: 1.2em;
-  flex-wrap: wrap;
-}
-
-#board {
-  display: grid;
-  gap: 12px;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-.card {
-  width: 60px;
-  height: 60px;
-  background: #ba68c8;
+  background: #fff3cd;
+  padding: 10px;
   border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 28px;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #6c4f00;
 }
 
-.card.flipped, .card.matched {
-  background-color: #4dd0e1;
-  color: #000;
+.score-panel div span {
+  font-weight: 900;
+}
+
+/* Título da fase */
+#stage-title {
+  margin: 15px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Tabuleiro */
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Cartas */
+.card {
+  background: #ffd180;
+  border-radius: 15px;
+  padding: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+  user-select: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card.flipped,
+.card.matched {
+  background: #ffe57f;
   transform: scale(1.1);
 }
 
-#nextLevel {
-  padding: 12px 24px;
-  font-size: 1em;
-  background: #00c853;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-  transition: background 0.3s ease;
+.card.hidden {
+  background: #f5f5f5;
+  color: transparent;
+  pointer-events: none;
 }
 
-#nextLevel:hover {
-  background: #00b341;
-}
-
-.ranking {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.ranking h2 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-}
-
-.ranking ol {
-  list-style: none;
-  padding: 0;
-}
-
-.ranking li {
-  background: #ffffff88;
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 8px;
-}
-
+/* Botões */
 button {
-  margin: 10px;
-  font-size: 1em;
-  padding: 10px 16px;
+  background: #ff9800;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  font-size: 1rem;
   cursor: pointer;
-  background-color: #ff4081;
-  color: #fff;
-  transition: background 0.3s ease;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background-color: #e91e63;
+  background: #f57c00;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Ranking */
+#ranking {
+  margin-top: 20px;
+  text-align: left;
+}
+
+#ranking h3 {
+  color: #e65100;
+  margin-bottom: 10px;
+}
+
+#ranking-list {
+  list-style: decimal;
+  padding-left: 20px;
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .game-board {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
