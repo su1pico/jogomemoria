@@ -1,72 +1,112 @@
-body {
+* {
+  box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #f8b500, #ff4e50);
+}
+
+body {
+  background: linear-gradient(to right, #ffe259, #ffa751);
   margin: 0;
   padding: 0;
-  color: #333;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  align-items: center;
 }
 
 .container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
   text-align: center;
 }
 
 header h1 {
+  font-size: 2rem;
   margin: 0;
-  font-size: 2em;
+  color: #ff9900;
+}
+
+header p {
+  margin: 5px 0 20px;
+  color: #444;
 }
 
 .score-panel {
   display: flex;
   justify-content: space-around;
-  margin: 15px 0;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
   font-weight: bold;
+  color: #333;
+}
+
+#stage-title {
+  margin: 10px 0;
+  color: #007bff;
 }
 
 .game-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin: 20px 0;
-}
-
-.card {
-  background: #6a00f4;
-  color: white;
-  font-size: 2em;
-  padding: 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.card.revealed {
-  background: #ffffff;
-  color: #6a00f4;
-  border: 2px solid #6a00f4;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 button {
-  margin: 10px 5px;
-  padding: 10px 20px;
+  background-color: #ffcc00;
   border: none;
-  border-radius: 6px;
-  background: #6a00f4;
-  color: white;
-  font-size: 1em;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 1rem;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background: #4e00c0;
+  background-color: #ffaa00;
 }
 
-.hidden {
+button.hidden {
   display: none;
+}
+
+.card {
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s;
+}
+
+.card.flipped {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.card.matched {
+  background: #c6ffc1;
+  pointer-events: none;
+}
+
+#ranking {
+  text-align: left;
+  margin-top: 20px;
+}
+
+#ranking h3 {
+  margin-bottom: 10px;
+}
+
+#ranking-list {
+  padding-left: 20px;
 }
