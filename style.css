@@ -53,10 +53,39 @@ header p {
 
 .game-board {
   display: grid;
-  gap: 10px;
+  gap: 15px;
   justify-content: center;
   margin-bottom: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  max-width: 100%;
+}
+
+.card {
+  width: 80px;
+  height: 80px;
+  font-size: 2.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 15px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+.card.flipped {
+  background: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+}
+
+.card.matched {
+  background: #c6ffc1;
+  pointer-events: none;
+  box-shadow: 0 0 12px 3px #4caf50;
+  transform: scale(1.1);
 }
 
 button {
@@ -91,34 +120,6 @@ button.hidden {
   background-color: #007acc;
 }
 
-.card {
-  width: 60px;
-  height: 60px;
-  font-size: 2.2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f2f2f2;
-  border-radius: 12px;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.2s ease, background-color 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.card.flipped {
-  background: #fff;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.card.matched {
-  background: #c6ffc1;
-  pointer-events: none;
-  box-shadow: 0 0 10px 2px #4caf50;
-  transform: scale(1.1);
-}
-
 #ranking {
   text-align: left;
   margin-top: 20px;
@@ -148,9 +149,9 @@ button.hidden {
 /* Responsividade */
 @media (max-width: 400px) {
   .card {
-    width: 50px;
-    height: 50px;
-    font-size: 1.8rem;
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
   }
 
   button {
