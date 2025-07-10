@@ -29,7 +29,7 @@ const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
 
-// Música de fundo e botão
+// Música de fundo
 const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
 let musicaTocando = false;
@@ -55,8 +55,6 @@ window.addEventListener("load", () => {
     toggleMusicBtn.textContent = "🔇 Música Desligada";
   });
 });
-
-// --- FUNÇÕES ---
 
 function iniciarJogo() {
   cartasSelecionadas = [];
@@ -101,7 +99,6 @@ function criarCarta(emoji, index) {
   carta.dataset.emoji = emoji;
   carta.dataset.index = index;
 
-  // Estrutura interna para flip 3D
   carta.innerHTML = `
     <div class="card-inner">
       <div class="card-front"><span class="emoji">${emoji}</span></div>
@@ -125,8 +122,7 @@ function gerarCartas() {
 }
 
 function virarCarta() {
-  if (cartasSelecionadas.length === 2) return;
-  if (this.classList.contains("flip")) return;
+  if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
 
   this.classList.add("flip");
   cartasSelecionadas.push(this);
@@ -165,7 +161,6 @@ function virarCarta() {
 }
 
 function lockBoardTemporariamente(callback, delay) {
-  // Bloqueia jogadas durante delay
   board.style.pointerEvents = "none";
   setTimeout(() => {
     callback();
@@ -195,7 +190,7 @@ function salvarRanking() {
 function mostrarRanking() {
   rankingList.innerHTML = "";
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
-  dados.forEach((item, i) => {
+  dados.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
     rankingList.appendChild(li);
@@ -236,19 +231,15 @@ nextBtn.addEventListener("click", () => {
     score = 0;
   }
   iniciarJogo();
-  nextBtn.classList.add("hidden");
-  shareBtn.classList.add("hidden");
 });
 
 restartBtn.addEventListener("click", () => {
   score = 0;
   faseAtual = 0;
   iniciarJogo();
-  nextBtn.classList.add("hidden");
-  shareBtn.classList.add("hidden");
 });
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
-// Começa o jogo
+// Iniciar
 iniciarJogo();
