@@ -1,5 +1,4 @@
-// script.js
-const emojisPorFase = [  
+const emojisPorFase = [
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
   ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
@@ -10,8 +9,8 @@ let cartasSelecionadas = [];
 let cartasViradas = 0;
 let jogadas = 0;
 let score = 0;
-let timer;
 let tempo = 0;
+let timer;
 
 const board = document.getElementById("game-board");
 const stageTitle = document.getElementById("stage-title");
@@ -59,11 +58,11 @@ function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
+  movesSpan.textContent = 0;
+  scoreSpan.textContent = 0;
   tempo = 0;
-  movesSpan.textContent = jogadas;
   timerSpan.textContent = "00:00";
   atualizarTituloFase();
-  atualizarPontuacao(0);
   iniciarTimer();
   gerarCartas();
   rankingEl.classList.add("hidden");
@@ -92,12 +91,11 @@ function atualizarTituloFase() {
   levelSpan.textContent = faseAtual + 1;
 }
 
-function criarCarta(emoji, index) {
+function criarCarta(emoji) {
   const carta = document.createElement("div");
   carta.className = "card";
-  carta.dataset.emoji = emoji;
-  carta.dataset.index = index;
   carta.textContent = "❓";
+  carta.dataset.emoji = emoji;
   carta.addEventListener("click", virarCarta);
   return carta;
 }
@@ -106,18 +104,16 @@ function gerarCartas() {
   board.innerHTML = "";
   const emojis = [...emojisPorFase[faseAtual]];
   const cartas = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
-
-  cartas.forEach((emoji, index) => {
-    const carta = criarCarta(emoji, index);
-    board.appendChild(carta);
+  cartas.forEach(emoji => {
+    board.appendChild(criarCarta(emoji));
   });
 }
 
 function virarCarta() {
   if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
 
-  this.classList.add("flip");
   this.textContent = this.dataset.emoji;
+  this.classList.add("flip");
   cartasSelecionadas.push(this);
 
   if (cartasSelecionadas.length === 2) {
@@ -137,7 +133,8 @@ function virarCarta() {
         clearInterval(timer);
         soundWin.play();
         const pontosGanhos = calcularPontuacao();
-        atualizarPontuacao(score + pontosGanhos);
+        score += pontosGanhos;
+        scoreSpan.textContent = score;
         salvarRanking();
         mostrarRanking();
         nextBtn.classList.remove("hidden");
@@ -145,23 +142,15 @@ function virarCarta() {
       }
     } else {
       soundError.play();
-      lockBoardTemporariamente(() => {
+      setTimeout(() => {
         c1.classList.remove("flip");
         c2.classList.remove("flip");
         c1.textContent = "❓";
         c2.textContent = "❓";
         cartasSelecionadas = [];
-      }, 900);
+      }, 800);
     }
   }
-}
-
-function lockBoardTemporariamente(callback, delay) {
-  board.style.pointerEvents = "none";
-  setTimeout(() => {
-    callback();
-    board.style.pointerEvents = "auto";
-  }, delay);
 }
 
 function calcularPontuacao() {
@@ -169,11 +158,6 @@ function calcularPontuacao() {
   const eficiencia = Math.max(1, (emojisPorFase[faseAtual].length * 2) / jogadas);
   const tempoFactor = Math.max(1, 60 / (tempo || 1));
   return Math.round(base * eficiencia * tempoFactor);
-}
-
-function atualizarPontuacao(novoScore) {
-  score = novoScore;
-  scoreSpan.textContent = score;
 }
 
 function salvarRanking() {
@@ -186,7 +170,7 @@ function salvarRanking() {
 function mostrarRanking() {
   rankingList.innerHTML = "";
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
-  dados.forEach((item) => {
+  dados.forEach((item, i) => {
     const li = document.createElement("li");
     li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
     rankingList.appendChild(li);
@@ -198,6 +182,7 @@ function gerarImagemPartilha() {
   const ctx = canvas.getContext("2d");
   canvas.width = 500;
   canvas.height = 260;
+
   ctx.fillStyle = "#FFE59A";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -229,11 +214,12 @@ nextBtn.addEventListener("click", () => {
 });
 
 restartBtn.addEventListener("click", () => {
-  faseAtual = 0;
   score = 0;
+  faseAtual = 0;
   iniciarJogo();
 });
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
+// Início
 iniciarJogo();
