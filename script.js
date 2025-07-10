@@ -30,37 +30,45 @@ const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
 const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
+
 let musicaTocando = false;
 
+// Tenta iniciar música automaticamente ao carregar
+window.addEventListener("load", () => {
+  bgMusic.volume = 0.3;
+  bgMusic.play().then(() => {
+    musicaTocando = true;
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+  }).catch(() => {});
+});
+
+// Alternar música
 toggleMusicBtn.addEventListener("click", () => {
   if (musicaTocando) {
     bgMusic.pause();
     toggleMusicBtn.textContent = "🔇 Música Desligada";
-    musicaTocando = false;
   } else {
     bgMusic.play().catch(() => {});
     toggleMusicBtn.textContent = "🔊 Música Ligada";
-    musicaTocando = true;
   }
+  musicaTocando = !musicaTocando;
 });
 
+// Iniciar o jogo
 function iniciarJogo() {
-  if (!musicaTocando) {
-    bgMusic.play().then(() => {
-      musicaTocando = true;
-      toggleMusicBtn.textContent = "🔊 Música Ligada";
-    }).catch(() => {});
-  }
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
-  movesSpan.textContent = 0;
-  scoreSpan.textContent = 0;
   tempo = 0;
+
+  movesSpan.textContent = "0";
+  scoreSpan.textContent = score;
   timerSpan.textContent = "00:00";
+
   atualizarTituloFase();
   iniciarTimer();
   gerarCartas();
+
   rankingEl.classList.add("hidden");
   nextBtn.classList.add("hidden");
   shareBtn.classList.add("hidden");
@@ -92,6 +100,7 @@ function criarCarta(emoji) {
   carta.className = "card";
   carta.textContent = "❓";
   carta.dataset.emoji = emoji;
+  carta.dataset.virada = "false";
   carta.addEventListener("click", virarCarta);
   return carta;
 }
@@ -106,7 +115,11 @@ function gerarCartas() {
 }
 
 function virarCarta() {
-  if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
+  if (
+    cartasSelecionadas.length === 2 ||
+    this.classList.contains("flip") ||
+    cartasSelecionadas.includes(this)
+  ) return;
 
   this.textContent = this.dataset.emoji;
   this.classList.add("flip");
