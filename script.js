@@ -46,10 +46,14 @@ function iniciarTimer() {
   clearInterval(timer);
   timer = setInterval(() => {
     tempo++;
-    const min = String(Math.floor(tempo / 60)).padStart(2, "0");
-    const sec = String(tempo % 60).padStart(2, "0");
-    timerSpan.textContent = `${min}:${sec}`;
+    timerSpan.textContent = formatarTempo(tempo);
   }, 1000);
+}
+
+function formatarTempo(segundos) {
+  const min = String(Math.floor(segundos / 60)).padStart(2, "0");
+  const sec = String(segundos % 60).padStart(2, "0");
+  return `${min}:${sec}`;
 }
 
 function atualizarTituloFase() {
@@ -153,16 +157,20 @@ function gerarImagemPartilha() {
   const ctx = canvas.getContext("2d");
   canvas.width = 500;
   canvas.height = 260;
+
   ctx.fillStyle = "#FFE59A";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
   ctx.fillStyle = "#333";
-  ctx.font = "bold 22px Segoe UI";
+  ctx.font = "bold 22px 'Segoe UI', sans-serif";
   ctx.fillText("🐥 Desafio Pico-Pico", 20, 40);
-  ctx.font = "18px Segoe UI";
+
+  ctx.font = "18px 'Segoe UI', sans-serif";
   ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
   ctx.fillText(`🎯 Nível: ${faseAtual + 1}`, 20, 110);
-  ctx.fillText(`⏱️ Tempo: ${tempo}s`, 20, 140);
+  ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempo)}`, 20, 140);
   ctx.fillText(`📍 Jogadas: ${jogadas}`, 20, 170);
+
   const url = canvas.toDataURL("image/png");
   const link = document.createElement("a");
   link.href = url;
