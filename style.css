@@ -26,17 +26,6 @@ body {
   width: 100%;
 }
 
-header h1 {
-  font-size: 2rem;
-  color: #ff9900;
-  margin-bottom: 5px;
-}
-
-header p {
-  color: #444;
-  margin-bottom: 20px;
-}
-
 .score-panel {
   display: flex;
   justify-content: space-around;
@@ -54,21 +43,20 @@ header p {
 }
 
 .game-board {
-  background-color: #fffbe6;
-  padding: 20px;
+  background-color: #fff7cc;
+  padding: 25px;
   border-radius: 15px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 15px;
   justify-content: center;
   margin-bottom: 20px;
 }
 
-
 .card {
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   font-size: 2rem;
   display: flex;
   justify-content: center;
@@ -83,20 +71,18 @@ header p {
   overflow: hidden;
 }
 
-/* Imagem da personagem */
 .card img.character-image {
+  display: block;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 12px;
-  transition: opacity 0.3s ease;
   z-index: 1;
 }
 
-/* Emoji oculto inicialmente */
 .card .emoji {
   font-size: 2rem;
   z-index: 2;
@@ -104,12 +90,10 @@ header p {
   visibility: hidden;
 }
 
-/* Emoji revelado ao virar */
 .card.flip .emoji {
   visibility: visible;
 }
 
-/* Esconde imagem ao virar */
 .card.flip img.character-image {
   display: none;
 }
@@ -125,7 +109,6 @@ header p {
   box-shadow: 0 0 10px 2px #4caf50;
 }
 
-/* Botões */
 button {
   background-color: #ffcc00;
   border: none;
@@ -156,7 +139,6 @@ button.hidden {
   background-color: #007acc;
 }
 
-/* Ranking */
 #ranking {
   text-align: left;
   margin-top: 20px;
@@ -182,7 +164,6 @@ button.hidden {
   display: none;
 }
 
-/* Responsivo */
 @media (max-width: 400px) {
   .card {
     width: 50px;
