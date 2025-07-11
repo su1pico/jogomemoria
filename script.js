@@ -1,343 +1,165 @@
+// Jogo da Memória Pico-Pico com fases, estrelas, sons e ranking
+
 const emojisPorFase = [
-  ["🐶", "🐱", "🐭", "🐹"], //4 pares
-  ["🐶", "🐱", "🐭", "🐹", "🦊", "🐻"], //6 pares
-  ["🦁", "🐯", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧"], //8 pares
-  ["🦄", "🐍", "🦓", "🐘", "🐪", "🐬", "🐙", "🐢", "🐝"], //9 pares
-  ["🌻", "🌼", "🌸", "🌺", "🌹", "🍀", "🌷", "🪷", "🌵", "🍁"], //10 pares
-  ["🐙", "🐠", "🐟", "🐡", "🦑", "🦀", "🪼", "🐬", "🐳", "🐋", "🦈"], //11 pares
-  ["🐉", "🐲", "🧚", "🧞", "🧜", "🧝", "🧙", "🧛", "👽", "🤖", "👾", "🎃"], //12 pares
-  ["🍎", "🍌", "🍉", "🍇", "🍓", "🍒", "🥝", "🍍", "🥥", "🍑", "🍐", "🍊", "🥭"], //13 pares
-  ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏉", "🎱", "🥎", "🏓", "🏸", "🥏", "🏒", "🏑"], //14 pares
-  ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🛵"], //15 pares
+  ['🐶', '🐱', '🐔', '🐾'], // 4 cartas (2 pares)
+  ['🌿', '🐻', '🦜', '🐼', '🌿', '🐻'],
+  ['🐺', '🐘', '🐷', '🐵', '🐺', '🐘', '🐷', '🐵'],
+  // ... mais fases até 10
 ];
 
-const tempoPorFase = [90, 80, 70, 65, 60, 55, 50, 45, 40, 35]; // Segundos limite por fase
+const tempoLimitePorFase = [30, 40, 50, 60, 70, 80, 90, 100, 110, 120];
 
-const starsMax = 3;
-
-let level = 0; // 0 a 9 (fase 1 a 10)
-let cardsArray = [];
-let firstCard = null;
-let secondCard = null;
-let lockBoard = false;
-let matchedPairs = 0;
-let moves = 0;
-let score = 0;
-let timerInterval = null;
-let timeLeft = 0;
+let faseAtual = 0;
+let jogadas = 0;
+let paresEncontrados = 0;
+let tempoRestante = 0;
+let intervaloTempo;
+let primeiraCarta = null;
+let bloqueio = false;
+let ranking = [];
 
 const gameBoard = document.getElementById("game-board");
-const movesCounter = document.getElementById("moves");
-const scoreCounter = document.getElementById("score");
-const timerDisplay = document.getElementById("timer");
-const levelDisplay = document.getElementById("level");
 const stageTitle = document.getElementById("stage-title");
-const starsContainer = document.getElementById("stars-container");
-const restartBtn = document.getElementById("restart-button");
-const nextBtn = document.getElementById("next-button");
-const shareBtn = document.getElementById("share-button");
-const rankingDiv = document.getElementById("ranking");
+const jogadasEl = document.getElementById("jogadas");
+const tempoEl = document.getElementById("tempo");
+const estrelasEl = document.getElementById("estrelas");
 const rankingList = document.getElementById("ranking-list");
+const avancarBtn = document.getElementById("next-btn");
 
-const soundMatch = document.getElementById("sound-match");
-const soundError = document.getElementById("sound-error");
-const soundWin = document.getElementById("sound-win");
-const bgMusic = document.getElementById("bg-music");
-const toggleMusicBtn = document.getElementById("toggle-music-btn");
+const bgMusic = new Audio("musica.mp3");
+const soundMatch = new Audio("acerto.mp3");
+const soundError = new Audio("erro.mp3");
+const soundWin = new Audio("vitoria.mp3");
+bgMusic.loop = true;
 
-// Começar música ligada
-let musicOn = true;
-bgMusic.play();
-toggleMusicBtn.textContent = "🔊 Música Ligada";
-
-toggleMusicBtn.addEventListener("click", () => {
-  if(musicOn){
-    bgMusic.pause();
-    musicOn = false;
-    toggleMusicBtn.textContent = "🔇 Música Desligada";
-  } else {
-    bgMusic.play();
-    musicOn = true;
-    toggleMusicBtn.textContent = "🔊 Música Ligada";
-  }
-});
-
-restartBtn.addEventListener("click", () => {
-  resetGame();
-});
-
-nextBtn.addEventListener("click", () => {
-  if(level < 9){
-    level++;
-    startPhase(level);
-  }
-});
-
-shareBtn.addEventListener("click", () => {
-  alert(Partilhar pontuação: ${score} pontos no nível ${level+1});
-  // Aqui podes implementar gerar imagem ou partilha real em redes sociais
-});
-
-// Função para embaralhar array
-function shuffle(array) {
-  for(let i = array.length -1; i > 0; i--){
-    let j = Math.floor(Math.random() * (i+1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+function embaralhar(array) {
+  return [...array].sort(() => Math.random() - 0.5);
 }
 
-// Cria cartas para a fase
-function createCardsForPhase(phaseIndex){
-  const emojis = emojisPorFase[phaseIndex];
-  let cards = [];
+function iniciarFase() {
+  const fase = emojisPorFase[faseAtual];
+  const embaralhado = embaralhar([...fase, ...fase]);
+  gameBoard.innerHTML = "";
+  jogadas = 0;
+  paresEncontrados = 0;
+  primeiraCarta = null;
+  bloqueio = false;
+  stageTitle.textContent = `Nível ${faseAtual + 1}`;
+  jogadasEl.textContent = jogadas;
+  estrelasEl.innerHTML = '';
 
-  emojis.forEach((emoji) => {
-    cards.push({ emoji, id: emoji + "_1" });
-    cards.push({ emoji, id: emoji + "_2" });
+  embaralhado.forEach((emoji) => {
+    const carta = document.createElement("div");
+    carta.className = "card";
+    carta.dataset.valor = emoji;
+    carta.style.backgroundImage = "url('carapicopico.png')";
+    carta.addEventListener("click", virarCarta);
+    gameBoard.appendChild(carta);
   });
 
-  return shuffle(cards);
+  iniciarTempo();
 }
 
-// Atualiza o timer na interface no formato mm:ss
-function updateTimerDisplay(seconds) {
-  const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
-  const secs = (seconds % 60).toString().padStart(2, "0");
-  timerDisplay.textContent = ${mins}:${secs};
-}
-
-// Começa o timer da fase
-function startTimer(seconds) {
-  timeLeft = seconds;
-  updateTimerDisplay(timeLeft);
-
-  if(timerInterval) clearInterval(timerInterval);
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerDisplay(timeLeft);
-
-    if(timeLeft <= 0){
-      clearInterval(timerInterval);
-      lockBoard = true;
-      alert("Tempo esgotado! Fim da fase.");
-      endPhase(false);
+function iniciarTempo() {
+  tempoRestante = tempoLimitePorFase[faseAtual];
+  tempoEl.textContent = tempoRestante + "s";
+  clearInterval(intervaloTempo);
+  intervaloTempo = setInterval(() => {
+    tempoRestante--;
+    tempoEl.textContent = tempoRestante + "s";
+    if (tempoRestante <= 0) {
+      clearInterval(intervaloTempo);
+      alert("Tempo esgotado!");
+      iniciarFase();
     }
   }, 1000);
 }
 
-function stopTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-}
+function virarCarta() {
+  if (bloqueio || this.classList.contains("flip")) return;
+  this.classList.add("flip");
+  this.style.backgroundImage = "none";
+  this.textContent = this.dataset.valor;
 
-// Mostra estrelas conforme jogadas (menos jogadas = mais estrelas)
-function updateStars(){
-  // Base simples: se jogadas <= pares*2+2 = 3 estrelas, senão 2 ou 1
-  const pares = emojisPorFase[level].length;
-  let stars = 1;
-
-  if(moves <= pares * 2 + 2) stars = 3;
-  else if(moves <= pares * 3) stars = 2;
-
-  starsContainer.textContent = "⭐".repeat(stars);
-  return stars;
-}
-
-// Atualiza título da fase
-function updateStageTitle(){
-  const fases = [
-    "Fácil", "Médio Fácil", "Médio", "Médio Difícil", "Difícil",
-    "Muito Difícil", "Extremo", "Super Extremo", "Insano", "Lendário"
-  ];
-
-  stageTitle.textContent = Fase ${level + 1}: ${fases[level]};
-  levelDisplay.textContent = level + 1;
-}
-
-// Atualiza ranking visual
-function updateRankingDisplay(){
-  const rankingKey = picoPicoRankingFase${level+1};
-  let ranking = JSON.parse(localStorage.getItem(rankingKey)) || [];
-
-  rankingList.innerHTML = "";
-  if(ranking.length === 0){
-    rankingList.innerHTML = "<li>Ninguém ainda nesta fase.</li>";
+  if (!primeiraCarta) {
+    primeiraCarta = this;
     return;
   }
 
-  ranking.forEach((entry) => {
-    let li = document.createElement("li");
-    li.textContent = ${entry.nome} - ${entry.pontuacao} pontos;
-    rankingList.appendChild(li);
-  });
-}
+  jogadas++;
+  jogadasEl.textContent = jogadas;
+  bloqueio = true;
 
-// Grava ranking no localStorage (máximo 10)
-function saveRanking(nome, pontuacao){
-  const rankingKey = picoPicoRankingFase${level+1};
-  let ranking = JSON.parse(localStorage.getItem(rankingKey)) || [];
-
-  ranking.push({ nome, pontuacao });
-  ranking.sort((a,b) => b.pontuacao - a.pontuacao);
-  if(ranking.length > 10) ranking = ranking.slice(0,10);
-
-  localStorage.setItem(rankingKey, JSON.stringify(ranking));
-  updateRankingDisplay();
-}
-
-// Cria e mostra o tabuleiro da fase
-function renderBoard(){
-  gameBoard.innerHTML = "";
-  cardsArray.forEach(card => {
-    const cardDiv = document.createElement("div");
-    cardDiv.classList.add("card");
-    cardDiv.dataset.id = card.id;
-    cardDiv.dataset.emoji = card.emoji;
-    cardDiv.innerHTML = <span class="emoji">${card.emoji}</span>;
-    cardDiv.addEventListener("click", onCardClick);
-    gameBoard.appendChild(cardDiv);
-  });
-
-  // Ajustar colunas para número de pares
-  const pares = emojisPorFase[level].length;
-  // Para desktop 4 colunas até 8 pares, depois 5 ou 6
-  if(pares <= 4) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
-  else if(pares <= 6) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
-  else if(pares <= 8) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
-  else if(pares <= 10) gameBoard.style.gridTemplateColumns = "repeat(5, 1fr)";
-  else gameBoard.style.gridTemplateColumns = "repeat(6, 1fr)";
-}
-
-// Manipulação click nas cartas
-function onCardClick(e){
-  if(lockBoard) return;
-  const card = e.currentTarget;
-  if(card === firstCard || card.classList.contains("matched") || card.classList.contains("flip")) return;
-
-  flipCard(card);
-
-  if(!firstCard){
-    firstCard = card;
-  } else {
-    secondCard = card;
-    lockBoard = true;
-    moves++;
-    movesCounter.textContent = moves;
-    checkForMatch();
-  }
-}
-
-// Virar carta
-function flipCard(card){
-  card.classList.add("flip");
-}
-
-// Desvirar cartas erradas
-function unflipCards(){
-  setTimeout(() => {
-    firstCard.classList.remove("flip");
-    secondCard.classList.remove("flip");
-    resetBoard();
-  }, 1000);
-}
-
-// Reset estado do tabuleiro entre jogadas
-function resetBoard(){
-  [firstCard, secondCard] = [null, null];
-  lockBoard = false;
-}
-
-// Verifica se cartas batem
-function checkForMatch(){
-  if(firstCard.dataset.emoji === secondCard.dataset.emoji){
-    // Match
-    firstCard.classList.add("matched");
-    secondCard.classList.add("matched");
-    matchedPairs++;
-    score += 10; // Pontos fixos por par
-    scoreCounter.textContent = score;
+  if (this.dataset.valor === primeiraCarta.dataset.valor) {
     soundMatch.play();
-    updateStars();
-    resetBoard();
+    this.classList.add("matched");
+    primeiraCarta.classList.add("matched");
+    paresEncontrados++;
+    primeiraCarta = null;
+    bloqueio = false;
 
-    // Se todos pares achados
-    if(matchedPairs === emojisPorFase[level].length){
-      endPhase(true);
+    if (paresEncontrados === emojisPorFase[faseAtual].length) {
+      clearInterval(intervaloTempo);
+      soundWin.play();
+      mostrarEstrelas();
+      avancarBtn.classList.remove("hidden");
+      guardarRanking();
     }
   } else {
     soundError.play();
-    unflipCards();
+    setTimeout(() => {
+      this.classList.remove("flip");
+      this.textContent = "";
+      this.style.backgroundImage = "url('carapicopico.png')";
+      primeiraCarta.classList.remove("flip");
+      primeiraCarta.textContent = "";
+      primeiraCarta.style.backgroundImage = "url('carapicopico.png')";
+      primeiraCarta = null;
+      bloqueio = false;
+    }, 1000);
   }
 }
 
-// Termina fase
-function endPhase(vitoria){
-  stopTimer();
-  lockBoard = true;
+function mostrarEstrelas() {
+  const max = emojisPorFase[faseAtual].length;
+  let estrelas = 1;
+  if (jogadas <= max + 2) estrelas = 3;
+  else if (jogadas <= max * 1.5) estrelas = 2;
 
-  if(vitoria){
-    soundWin.play();
-    alert(Parabéns! Concluíste a fase ${level + 1}.);
+  for (let i = 0; i < estrelas; i++) {
+    const star = document.createElement("span");
+    star.textContent = "⭐";
+    estrelasEl.appendChild(star);
+  }
+}
 
-    // Pedir nome para ranking
-    let nome = prompt("Indica o teu nome para o ranking (max 10 caracteres):", "Jogador");
-    if(nome) nome = nome.trim().substring(0,10);
-    else nome = "Anon";
+function guardarRanking() {
+  const nome = prompt("Parabéns! Introduz o teu nome para o ranking:") || "Jogador";
+  const item = `${nome} - Nível ${faseAtual + 1} - ${jogadas} jogadas`;
+  ranking.unshift(item);
+  if (ranking.length > 10) ranking.pop();
+  rankingList.innerHTML = ranking.map((r) => `<li>${r}</li>`).join('');
+}
 
-    saveRanking(nome, score);
+function avancarFase() {
+  avancarBtn.classList.add("hidden");
+  faseAtual++;
+  if (faseAtual >= emojisPorFase.length) {
+    alert("Parabéns! Concluíste todos os níveis!");
+    faseAtual = 0;
+  }
+  iniciarFase();
+}
 
-    nextBtn.classList.remove("hidden");
-    shareBtn.classList.remove("hidden");
-    rankingDiv.classList.remove("hidden");
-    restartBtn.classList.add("hidden");
+document.getElementById("toggle-music-btn").addEventListener("click", () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
   } else {
-    alert("Tenta novamente!");
-    restartBtn.classList.remove("hidden");
-    nextBtn.classList.add("hidden");
-    shareBtn.classList.add("hidden");
+    bgMusic.pause();
   }
-}
+});
 
-// Inicializa/reset fase
-function startPhase(phaseNumber){
-  level = phaseNumber;
-  moves = 0;
-  score = 0;
-  matchedPairs = 0;
-  movesCounter.textContent = moves;
-  scoreCounter.textContent = score;
-  lockBoard = false;
-  firstCard = null;
-  secondCard = null;
+document.getElementById("restart-btn").addEventListener("click", iniciarFase);
+document.getElementById("next-btn").addEventListener("click", avancarFase);
 
-  updateStageTitle();
-  starsContainer.textContent = "";
-  rankingDiv.classList.add("hidden");
-  restartBtn.classList.remove("hidden");
-  nextBtn.classList.add("hidden");
-  shareBtn.classList.add("hidden");
-
-  cardsArray = createCardsForPhase(level);
-  renderBoard();
-  startTimer(tempoPorFase[level]);
-
-  updateRankingDisplay();
-}
-
-// Reset total jogo
-function resetGame(){
-  level = 0;
-  startPhase(level);
-  rankingDiv.classList.add("hidden");
-  restartBtn.classList.remove("hidden");
-  nextBtn.classList.add("hidden");
-  shareBtn.classList.add("hidden");
-}
-
-// Inicializa jogo
-window.onload = () => {
-  resetGame();
-};
-
-
+iniciarFase();
