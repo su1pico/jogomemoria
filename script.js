@@ -1,11 +1,11 @@
 const emojisPorFase = [
-  ["🍎", "🍌", "🍇", "🍉"],                           // 4 pares
-  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],               // 6 pares
-  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"],     // 8 pares
+  ["🍎", "🍌", "🍇", "🍉"],                           
+  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],               
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "❤", "🍀", "🍁"],     
   ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🥏", "🎱", "🏓", "🏸"],
   ["🚌", "🚓", "🚑", "🚒", "🚜", "🚀", "🚁", "✈️", "🚂", "🚗"],
   ["🍕", "🍔", "🍟", "🌭", "🍿", "🥪", "🥞", "🧁", "🍰", "🍩"],
-  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "🪗", "🎤", "🎧", "📯"],
+  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "❤", "🎤", "🎧", "📯"],
   ["🐙", "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳"],
   ["🧃", "🥤", "🍺", "🍷", "🥂", "🍾", "🥃", "🍸", "🍹", "🧋"],
   ["👻", "🤖", "🎃", "😺", "🐵", "🐔", "🦄", "🐲", "🦕", "🐉"]
@@ -18,7 +18,7 @@ let jogadas = 0;
 let score = 0;
 let tempo = 0;
 let timer;
-let tempoMaximo;  // tempo limite por fase (segundos)
+let tempoMaximo;
 
 const personagemImagem = "carapicopico.png";
 
@@ -71,10 +71,10 @@ function iniciarJogo() {
   jogadas = 0;
   movesSpan.textContent = 0;
   scoreSpan.textContent = score;
-  tempo = tempoMaximo; // começa no limite máximo da fase
 
   definirTempoLimite();
 
+  tempo = tempoMaximo; // começar no tempo máximo da fase
   timerSpan.textContent = formatarTempo(tempoMaximo);
   atualizarTituloFase();
   gerarCartas();
@@ -87,9 +87,8 @@ function iniciarJogo() {
 }
 
 function definirTempoLimite() {
-  // Define tempo máximo por fase (em segundos) — podes ajustar os valores
-  const base = 60; // 60s para fase 1
-  tempoMaximo = base + faseAtual * 30; // aumenta 30s a cada fase
+  const base = 60;
+  tempoMaximo = base + faseAtual * 30;
   tempo = tempoMaximo;
 }
 
@@ -217,12 +216,27 @@ function mostrarModalFim(venceu) {
   endModal.classList.remove("hidden");
   rankingEl.classList.remove("hidden");
 
+  const modalTitulo = endModal.querySelector("h2");
+  const modalMensagem = endModal.querySelector("p");
+
   if (venceu) {
     nextBtn.classList.remove("hidden");
     shareBtn.classList.remove("hidden");
+
+    if (faseAtual === emojisPorFase.length - 1) {
+      // Última fase concluída
+      modalTitulo.textContent = "🎉 Parabéns! 🎉";
+      modalMensagem.textContent = "ÉS O CAMPEÃO DO JOGO! 🏆💎";
+      nextBtn.classList.add("hidden"); // Opcional: não permitir avançar mais
+    } else {
+      modalTitulo.textContent = "Fim do Jogo!";
+      modalMensagem.textContent = "Insere o teu nome:";
+    }
   } else {
     nextBtn.classList.add("hidden");
     shareBtn.classList.add("hidden");
+    modalTitulo.textContent = "Fim do Jogo!";
+    modalMensagem.textContent = "Insere o teu nome:";
   }
 }
 
@@ -241,12 +255,14 @@ function guardarPontuacao() {
   endModal.classList.add("hidden");
   mostrarRanking();
 
-  // Avança para a próxima fase
-  faseAtual++;
-  if (faseAtual >= emojisPorFase.length) {
-    alert("🎉 Parabéns! Completaste todas as fases!");
+  if (faseAtual === emojisPorFase.length - 1) {
+    // Última fase concluída, reiniciar jogo
+    alert("🎉 Parabéns! Finalizaste o jogo! Vamos começar de novo.");
     faseAtual = 0;
     score = 0;
+  } else {
+    // Avança para a próxima fase
+    faseAtual++;
   }
 
   iniciarJogo();
