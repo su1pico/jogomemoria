@@ -87,22 +87,23 @@ function iniciarJogo() {
 }
 
 function definirTempoLimite() {
-  // Define tempo máximo por fase (em segundos) — podes ajustar os valores
-  const base = 60; // 60s para fase 1
-  tempoMaximo = base + faseAtual * 30; // aumenta 30s a cada fase
+  const base = 60;
+  tempoMaximo = base + faseAtual * 30;
 }
 
 function iniciarTimer() {
   clearInterval(timer);
   tempo = tempoMaximo;
+
   timerSpan.textContent = formatarTempo(tempo);
 
   timer = setInterval(() => {
     tempo--;
     timerSpan.textContent = formatarTempo(tempo);
+
     if (tempo <= 0) {
       clearInterval(timer);
-      alert("Tempo esgotado! Tente novamente.");
+      alert("⏱️ Tempo esgotado! Tenta novamente.");
       mostrarModalFim(false);
     }
   }, 1000);
@@ -311,3 +312,12 @@ document.querySelector("#endModal button").addEventListener("click", guardarPont
 
 // Inicia o jogo automaticamente ao carregar a página
 iniciarJogo();
+
+document.addEventListener("click", () => {
+  if (!musicaTocando) {
+    bgMusic.play().then(() => {
+      musicaTocando = true;
+      toggleMusicBtn.textContent = "🔊 Música Ligada";
+    }).catch(() => {});
+  }
+}, { once: true }); // Só executa uma vez
