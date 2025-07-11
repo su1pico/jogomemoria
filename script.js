@@ -46,9 +46,17 @@ const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
 
 // Começar música ligada
+document.addEventListener("DOMContentLoaded", () => {
+  bgMusic.play().then(() => {
+    musicOn = true;
+    toggleMusicBtn.textContent = "🔊 Música Ligada";
+  }).catch(() => {
+    musicOn = false;
+    toggleMusicBtn.textContent = "🔇 Música Desligada";
+  });
+});
+
 let musicOn = true;
-bgMusic.play();
-toggleMusicBtn.textContent = "🔊 Música Ligada";
 
 toggleMusicBtn.addEventListener("click", () => {
   if(musicOn){
@@ -75,10 +83,8 @@ nextBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", () => {
   alert(`Partilhar pontuação: ${score} pontos no nível ${level+1}`);
-  // Aqui podes implementar gerar imagem ou partilha real em redes sociais
 });
 
-// Função para embaralhar array
 function shuffle(array) {
   for(let i = array.length -1; i > 0; i--){
     let j = Math.floor(Math.random() * (i+1));
@@ -87,7 +93,6 @@ function shuffle(array) {
   return array;
 }
 
-// Cria cartas para a fase
 function createCardsForPhase(phaseIndex){
   const emojis = emojisPorFase[phaseIndex];
   let cards = [];
@@ -100,14 +105,12 @@ function createCardsForPhase(phaseIndex){
   return shuffle(cards);
 }
 
-// Atualiza o timer na interface no formato mm:ss
 function updateTimerDisplay(seconds) {
   const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
   const secs = (seconds % 60).toString().padStart(2, "0");
   timerDisplay.textContent = `${mins}:${secs}`;
 }
 
-// Começa o timer da fase
 function startTimer(seconds) {
   timeLeft = seconds;
   updateTimerDisplay(timeLeft);
@@ -131,9 +134,7 @@ function stopTimer(){
   if(timerInterval) clearInterval(timerInterval);
 }
 
-// Mostra estrelas conforme jogadas (menos jogadas = mais estrelas)
 function updateStars(){
-  // Base simples: se jogadas <= pares*2+2 = 3 estrelas, senão 2 ou 1
   const pares = emojisPorFase[level].length;
   let stars = 1;
 
@@ -144,7 +145,6 @@ function updateStars(){
   return stars;
 }
 
-// Atualiza título da fase
 function updateStageTitle(){
   const fases = [
     "Fácil", "Médio Fácil", "Médio", "Médio Difícil", "Difícil",
@@ -155,7 +155,6 @@ function updateStageTitle(){
   levelDisplay.textContent = level + 1;
 }
 
-// Atualiza ranking visual
 function updateRankingDisplay(){
   const rankingKey = `picoPicoRankingFase${level+1}`;
   let ranking = JSON.parse(localStorage.getItem(rankingKey)) || [];
@@ -173,7 +172,6 @@ function updateRankingDisplay(){
   });
 }
 
-// Grava ranking no localStorage (máximo 10)
 function saveRanking(nome, pontuacao){
   const rankingKey = `picoPicoRankingFase${level+1}`;
   let ranking = JSON.parse(localStorage.getItem(rankingKey)) || [];
@@ -186,7 +184,6 @@ function saveRanking(nome, pontuacao){
   updateRankingDisplay();
 }
 
-// Cria e mostra o tabuleiro da fase
 function renderBoard(){
   gameBoard.innerHTML = "";
   cardsArray.forEach(card => {
@@ -194,14 +191,21 @@ function renderBoard(){
     cardDiv.classList.add("card");
     cardDiv.dataset.id = card.id;
     cardDiv.dataset.emoji = card.emoji;
-    cardDiv.innerHTML = `<span class="emoji">${card.emoji}</span>`;
+    cardDiv.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">
+          <img src="carapicopico.png" alt="Pico-Pico" />
+        </div>
+        <div class="card-back">
+          <span class="emoji">${card.emoji}</span>
+        </div>
+      </div>
+    `;
     cardDiv.addEventListener("click", onCardClick);
     gameBoard.appendChild(cardDiv);
   });
 
-  // Ajustar colunas para número de pares
   const pares = emojisPorFase[level].length;
-  // Para desktop 4 colunas até 8 pares, depois 5 ou 6
   if(pares <= 4) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
   else if(pares <= 6) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
   else if(pares <= 8) gameBoard.style.gridTemplateColumns = "repeat(4, 1fr)";
@@ -209,7 +213,6 @@ function renderBoard(){
   else gameBoard.style.gridTemplateColumns = "repeat(6, 1fr)";
 }
 
-// Manipulação click nas cartas
 function onCardClick(e){
   if(lockBoard) return;
   const card = e.currentTarget;
@@ -228,12 +231,10 @@ function onCardClick(e){
   }
 }
 
-// Virar carta
 function flipCard(card){
   card.classList.add("flip");
 }
 
-// Desvirar cartas erradas
 function unflipCards(){
   setTimeout(() => {
     firstCard.classList.remove("flip");
@@ -242,26 +243,22 @@ function unflipCards(){
   }, 1000);
 }
 
-// Reset estado do tabuleiro entre jogadas
 function resetBoard(){
   [firstCard, secondCard] = [null, null];
   lockBoard = false;
 }
 
-// Verifica se cartas batem
 function checkForMatch(){
   if(firstCard.dataset.emoji === secondCard.dataset.emoji){
-    // Match
     firstCard.classList.add("matched");
     secondCard.classList.add("matched");
     matchedPairs++;
-    score += 10; // Pontos fixos por par
+    score += 10;
     scoreCounter.textContent = score;
     soundMatch.play();
     updateStars();
     resetBoard();
 
-    // Se todos pares achados
     if(matchedPairs === emojisPorFase[level].length){
       endPhase(true);
     }
@@ -271,7 +268,6 @@ function checkForMatch(){
   }
 }
 
-// Termina fase
 function endPhase(vitoria){
   stopTimer();
   lockBoard = true;
@@ -280,7 +276,6 @@ function endPhase(vitoria){
     soundWin.play();
     alert(`Parabéns! Concluíste a fase ${level + 1}.`);
 
-    // Pedir nome para ranking
     let nome = prompt("Indica o teu nome para o ranking (max 10 caracteres):", "Jogador");
     if(nome) nome = nome.trim().substring(0,10);
     else nome = "Anon";
@@ -299,7 +294,6 @@ function endPhase(vitoria){
   }
 }
 
-// Inicializa/reset fase
 function startPhase(phaseNumber){
   level = phaseNumber;
   moves = 0;
@@ -325,7 +319,6 @@ function startPhase(phaseNumber){
   updateRankingDisplay();
 }
 
-// Reset total jogo
 function resetGame(){
   level = 0;
   startPhase(level);
@@ -335,7 +328,6 @@ function resetGame(){
   shareBtn.classList.add("hidden");
 }
 
-// Inicializa jogo
 window.onload = () => {
   resetGame();
 };
