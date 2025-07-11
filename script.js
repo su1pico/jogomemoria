@@ -270,7 +270,7 @@ function gerarImagemPartilha() {
   ctx.fillStyle = "#FFE59A";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#333";
+  ctx.fillStyle = "#ff9900";
   ctx.font = "bold 22px 'Luckiest Guy', cursive";
   ctx.fillText("🐥 Desafio Pico-Pico", 20, 40);
 
