@@ -53,12 +53,6 @@ header p {
   font-weight: 600;
 }
 
-#stars-container {
-  font-size: 1.8rem;
-  color: #ffcc00;
-  margin-bottom: 15px;
-}
-
 .game-board {
   background-color: #fffbe6;
   padding: 20px;
@@ -78,7 +72,7 @@ header p {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #ffe599;
+  background: url('carapicopico.png') center center / contain no-repeat;
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
@@ -88,6 +82,7 @@ header p {
   overflow: hidden;
 }
 
+/* Emoji oculto inicialmente */
 .card .emoji {
   font-size: 2rem;
   z-index: 2;
@@ -95,21 +90,25 @@ header p {
   visibility: hidden;
 }
 
+/* Emoji revelado ao virar */
 .card.flip .emoji {
   visibility: visible;
 }
 
+/* Oculta o fundo da carta (capa do Pico-Pico) ao virar */
 .card.flip {
   background: #ffffff;
   transform: scale(1.05);
 }
 
+/* Estilo para cartas com par feito */
 .card.matched {
   background: #c6ffc1;
   pointer-events: none;
   box-shadow: 0 0 10px 2px #4caf50;
 }
 
+/* Botões */
 button {
   background-color: #ffcc00;
   border: none;
@@ -140,6 +139,7 @@ button.hidden {
   background-color: #007acc;
 }
 
+/* Ranking */
 #ranking {
   text-align: left;
   margin-top: 20px;
@@ -161,6 +161,11 @@ button.hidden {
   font-size: 0.95rem;
 }
 
+#shareCanvas {
+  display: none;
+}
+
+/* Responsivo */
 @media (max-width: 400px) {
   .card {
     width: 50px;
@@ -171,9 +176,5 @@ button.hidden {
   button {
     padding: 8px 15px;
     font-size: 0.9rem;
-  }
-
-  #stars-container {
-    font-size: 1.3rem;
   }
 }
