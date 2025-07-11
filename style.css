@@ -1,6 +1,9 @@
+/* Fonte do texto */
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
 * {
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Luckiest Guy', cursive;
   margin: 0;
   padding: 0;
 }
@@ -24,6 +27,7 @@ body {
   text-align: center;
 }
 
+/* Header and stage */
 header h1 {
   font-size: 2rem;
   color: #ff9900;
@@ -35,6 +39,14 @@ header p {
   margin-bottom: 20px;
 }
 
+#stage-title {
+  margin: 10px 0 20px;
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* Score panel */
 .score-panel {
   display: flex;
   justify-content: space-around;
@@ -45,12 +57,7 @@ header p {
   gap: 15px;
 }
 
-#stage-title {
-  margin: 10px 0 20px;
-  color: #007bff;
-  font-weight: 600;
-}
-
+/* Game board */
 .game-board {
   background-color: #fffbe6;
   padding: 20px;
@@ -63,6 +70,7 @@ header p {
   margin-bottom: 20px;
 }
 
+/* Individual cards */
 .card {
   width: 70px;
   height: 70px;
@@ -76,19 +84,42 @@ header p {
   user-select: none;
   transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  color: transparent;
+  position: relative;
+  overflow: hidden;
+  color: transparent; /* emoji hidden at first */
 }
 
+/* Flipped cards show emoji */
 .card.flip {
   background: #ffffff;
   transform: scale(1.1);
   color: #000;
 }
 
+/* Matched cards style */
 .card.matched {
   background: #c6ffc1;
   pointer-events: none;
   box-shadow: 0 0 10px 2px #4caf50;
+}
+
+/* Character image style inside cards */
+.card img.character-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* Image disappears when flipped */
+.card.flip img.character-image {
+  display: none;
 }
 
 button {
@@ -110,54 +141,4 @@ button:hover:not(.hidden) {
 
 button.hidden {
   display: none !important;
-}
-
-#toggle-music-btn {
-  margin-top: 10px;
-  background-color: #0099ff;
-  color: white;
-  font-weight: 600;
-}
-
-#toggle-music-btn:hover {
-  background-color: #007acc;
-}
-
-#ranking {
-  text-align: left;
-  margin-top: 20px;
-  max-height: 150px;
-  overflow-y: auto;
-  border-top: 2px solid #ffcc00;
-  padding-top: 10px;
-}
-
-#ranking h3 {
-  margin-bottom: 10px;
-  color: #333;
-  font-weight: 700;
-}
-
-#ranking-list {
-  list-style: disc inside;
-  color: #555;
-  padding-left: 10px;
-  font-size: 0.95rem;
-}
-
-#shareCanvas {
-  display: none;
-}
-
-@media (max-width: 400px) {
-  .card {
-    width: 50px;
-    height: 50px;
-    font-size: 1.6rem;
-  }
-
-  button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-  }
 }
