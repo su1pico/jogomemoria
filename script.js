@@ -240,6 +240,15 @@ function guardarPontuacao() {
 
   endModal.classList.add("hidden");
   mostrarRanking();
+
+  // Avança para a próxima fase
+  faseAtual++;
+  if (faseAtual >= emojisPorFase.length) {
+    alert("🎉 Parabéns! Completaste todas as fases!");
+    faseAtual = 0;
+    score = 0;
+  }
+
   iniciarJogo();
 }
 
