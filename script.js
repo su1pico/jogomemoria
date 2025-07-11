@@ -1,14 +1,9 @@
 const emojisPorFase = [
-  ["🍎", "🍌", "🍇", "🍉"],                           
-  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],               
-  ["🌸", "🌻", "🌼", "🌹", "🌷", "❤", "🍀", "🍁"],     
-  ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🥏", "🎱", "🏓", "🏸"],
-  ["🚌", "🚓", "🚑", "🚒", "🚜", "🚀", "🚁", "✈️", "🚂", "🚗"],
-  ["🍕", "🍔", "🍟", "🌭", "🍿", "🥪", "🥞", "🧁", "🍰", "🍩"],
-  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "❤", "🎤", "🎧", "📯"],
-  ["🐙", "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳"],
-  ["🧃", "🥤", "🍺", "🍷", "🥂", "🍾", "🥃", "🍸", "🍹", "🧋"],
-  ["👻", "🤖", "🎃", "😺", "🐵", "🐔", "🦄", "🐲", "🦕", "🐉"]
+  ["🍎", "🍌", "🍇", "🍉"], // Fase 1 - 4 pares
+  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"], // Fase 2 - 6 pares
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"], // Fase 3 - 8 pares
+  ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🥏", "🎱", "🏓", "🏸"], // Fase 4 - 10 pares
+  ["👑", "💎", "🏆", "🎖️", "🎉", "🎁", "💰", "🪙", "💵", "🗝️"] // Fase final - 10 pares (Tesouro)
 ];
 
 let faseAtual = 0;
@@ -17,8 +12,8 @@ let cartasViradas = 0;
 let jogadas = 0;
 let score = 0;
 let tempo = 0;
+let tempoMaximo = 0;
 let timer;
-let tempoMaximo;
 
 const personagemImagem = "carapicopico.png";
 
@@ -47,43 +42,45 @@ const playerNameInput = document.getElementById("playerName");
 let musicaTocando = false;
 
 toggleMusicBtn.addEventListener("click", () => {
-  if (musicaTocando) {
-    bgMusic.pause();
-    toggleMusicBtn.textContent = "🔇 Música Desligada";
-    musicaTocando = false;
-  } else {
-    bgMusic.play().catch(() => {});
-    toggleMusicBtn.textContent = "🔊 Música Ligada";
-    musicaTocando = true;
-  }
+  musicaTocando ? bgMusic.pause() : bgMusic.play().catch(() => {});
+  musicaTocando = !musicaTocando;
+  toggleMusicBtn.textContent = musicaTocando ? "🔊 Música Ligada" : "🔇 Música Desligada";
 });
 
-function iniciarJogo() {
+document.addEventListener("click", () => {
   if (!musicaTocando) {
     bgMusic.play().then(() => {
       musicaTocando = true;
       toggleMusicBtn.textContent = "🔊 Música Ligada";
     }).catch(() => {});
   }
+}, { once: true });
 
+restartBtn.addEventListener("click", () => {
+  faseAtual = 0;
+  score = 0;
+  iniciarJogo();
+});
+
+shareBtn.addEventListener("click", gerarImagemPartilha);
+document.querySelector("#endModal button").addEventListener("click", guardarPontuacao);
+
+function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
   movesSpan.textContent = 0;
   scoreSpan.textContent = score;
-
   definirTempoLimite();
-
-  tempo = tempoMaximo; // começar no tempo máximo da fase
   timerSpan.textContent = formatarTempo(tempoMaximo);
   atualizarTituloFase();
   gerarCartas();
+  iniciarTimer();
+
   rankingEl.classList.add("hidden");
   nextBtn.classList.add("hidden");
   shareBtn.classList.add("hidden");
   endModal.classList.add("hidden");
-
-  iniciarTimer();
 }
 
 function definirTempoLimite() {
@@ -94,7 +91,6 @@ function definirTempoLimite() {
 
 function iniciarTimer() {
   clearInterval(timer);
-  tempo = tempoMaximo;
   timerSpan.textContent = formatarTempo(tempo);
 
   timer = setInterval(() => {
@@ -102,7 +98,7 @@ function iniciarTimer() {
     timerSpan.textContent = formatarTempo(tempo);
     if (tempo <= 0) {
       clearInterval(timer);
-      alert("Tempo esgotado! Tente novamente.");
+      alert("⏱️ Tempo esgotado!");
       mostrarModalFim(false);
     }
   }, 1000);
@@ -115,53 +111,49 @@ function formatarTempo(segundos) {
 }
 
 function atualizarTituloFase() {
-  const titulos = ["Fácil", "Médio", "Intermédio", "Difícil"];
-  const emojis = emojisPorFase[faseAtual];
-  stageTitle.innerHTML = `Fase ${faseAtual + 1}: ${titulos[faseAtual] || "Avançado"}<br><small>${emojis.length * 2} cartas – Encontre ${emojis.length} pares</small>`;
+  const titulos = ["Fácil", "Médio", "Intermédio", "Difícil", "Final"];
+  const faseNome = titulos[faseAtual] || `Fase ${faseAtual + 1}`;
+  const total = emojisPorFase[faseAtual].length;
+  stageTitle.innerHTML = `Fase ${faseAtual + 1}: ${faseNome}<br><small>${total * 2} cartas – Encontre ${total} pares</small>`;
   levelSpan.textContent = faseAtual + 1;
-}
-
-function criarCarta(emoji) {
-  const carta = document.createElement("div");
-  carta.className = "card";
-  carta.dataset.emoji = emoji;
-
-  const imagem = document.createElement("img");
-  imagem.src = personagemImagem;
-  imagem.alt = "Personagem";
-  imagem.className = "character-image";
-
-  const emojiSpan = document.createElement("span");
-  emojiSpan.textContent = emoji;
-  emojiSpan.className = "emoji";
-  emojiSpan.style.visibility = "hidden";
-
-  carta.appendChild(imagem);
-  carta.appendChild(emojiSpan);
-  carta.addEventListener("click", virarCarta);
-  return carta;
 }
 
 function gerarCartas() {
   board.innerHTML = "";
   const emojis = [...emojisPorFase[faseAtual]];
   const cartas = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+
   cartas.forEach(emoji => {
-    board.appendChild(criarCarta(emoji));
+    const carta = document.createElement("div");
+    carta.className = "card";
+    carta.dataset.emoji = emoji;
+
+    const imagem = document.createElement("img");
+    imagem.src = personagemImagem;
+    imagem.alt = "Personagem";
+    imagem.className = "character-image";
+
+    const emojiSpan = document.createElement("span");
+    emojiSpan.textContent = emoji;
+    emojiSpan.className = "emoji";
+    emojiSpan.style.visibility = "hidden";
+
+    carta.appendChild(imagem);
+    carta.appendChild(emojiSpan);
+    carta.addEventListener("click", virarCarta);
+    board.appendChild(carta);
   });
 }
 
 function virarCarta() {
   mostrarEstrelas(jogadas, emojisPorFase[faseAtual].length);
-
   if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
 
   this.classList.add("flip");
   const img = this.querySelector("img");
-  const emojiSpan = this.querySelector(".emoji");
-
-  if (img) img.style.display = "none";
-  if (emojiSpan) emojiSpan.style.visibility = "visible";
+  const emoji = this.querySelector(".emoji");
+  img.style.display = "none";
+  emoji.style.visibility = "visible";
 
   cartasSelecionadas.push(this);
 
@@ -181,8 +173,7 @@ function virarCarta() {
       if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
         clearInterval(timer);
         soundWin.play();
-        const pontosGanhos = calcularPontuacao();
-        score += pontosGanhos;
+        score += calcularPontuacao();
         scoreSpan.textContent = score;
         mostrarModalFim(true);
       }
@@ -191,61 +182,32 @@ function virarCarta() {
       setTimeout(() => {
         c1.classList.remove("flip");
         c2.classList.remove("flip");
-
-        if (c1.querySelector("img")) c1.querySelector("img").style.display = "block";
-        if (c2.querySelector("img")) c2.querySelector("img").style.display = "block";
-
-        if (c1.querySelector(".emoji")) c1.querySelector(".emoji").style.visibility = "hidden";
-        if (c2.querySelector(".emoji")) c2.querySelector(".emoji").style.visibility = "hidden";
-
+        c1.querySelector("img").style.display = "block";
+        c2.querySelector("img").style.display = "block";
+        c1.querySelector(".emoji").style.visibility = "hidden";
+        c2.querySelector(".emoji").style.visibility = "hidden";
         cartasSelecionadas = [];
       }, 800);
     }
   }
 }
 
-function calcularPontuacao() {
-  const base = 1000;
-  const eficiencia = Math.max(1, (emojisPorFase[faseAtual].length * 2) / jogadas);
-  const tempoFactor = Math.max(1, tempoMaximo / (tempoMaximo - tempo || 1));
-  return Math.round(base * eficiencia * tempoFactor);
-}
-
 function mostrarModalFim(venceu) {
-  clearInterval(timer);
   endModal.classList.remove("hidden");
   rankingEl.classList.remove("hidden");
-
-  const modalTitulo = endModal.querySelector("h2");
-  const modalMensagem = endModal.querySelector("p");
 
   if (venceu) {
     nextBtn.classList.remove("hidden");
     shareBtn.classList.remove("hidden");
-
-    if (faseAtual === emojisPorFase.length - 1) {
-      // Última fase concluída
-      modalTitulo.textContent = "🎉 Parabéns! 🎉";
-      modalMensagem.textContent = "ÉS O CAMPEÃO DO JOGO! 🏆💎";
-      nextBtn.classList.add("hidden"); // Opcional: não permitir avançar mais
-    } else {
-      modalTitulo.textContent = "Fim do Jogo!";
-      modalMensagem.textContent = "Insere o teu nome:";
-    }
   } else {
     nextBtn.classList.add("hidden");
     shareBtn.classList.add("hidden");
-    modalTitulo.textContent = "Fim do Jogo!";
-    modalMensagem.textContent = "Insere o teu nome:";
   }
 }
 
 function guardarPontuacao() {
   const nome = playerNameInput.value.trim();
-  if (!nome) {
-    alert("Por favor, insira um nome para guardar a pontuação!");
-    return;
-  }
+  if (!nome) return alert("Insere um nome!");
 
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
   dados.push({ nome, score, nivel: faseAtual + 1, tempo: tempoMaximo - tempo });
@@ -255,17 +217,25 @@ function guardarPontuacao() {
   endModal.classList.add("hidden");
   mostrarRanking();
 
+  // Se for a última fase:
   if (faseAtual === emojisPorFase.length - 1) {
-    // Última fase concluída, reiniciar jogo
-    alert("🎉 Parabéns! Finalizaste o jogo! Vamos começar de novo.");
-    faseAtual = 0;
-    score = 0;
+    setTimeout(() => {
+      alert("🎉💰 ÉS O CAMPEÃO DO JOGO! 🏆");
+      faseAtual = 0;
+      score = 0;
+      iniciarJogo();
+    }, 100);
   } else {
-    // Avança para a próxima fase
     faseAtual++;
+    iniciarJogo();
   }
+}
 
-  iniciarJogo();
+function calcularPontuacao() {
+  const base = 1000;
+  const eficiencia = Math.max(1, (emojisPorFase[faseAtual].length * 2) / jogadas);
+  const tempoFactor = Math.max(1, tempoMaximo / (tempoMaximo - tempo || 1));
+  return Math.round(base * eficiencia * tempoFactor);
 }
 
 function mostrarRanking() {
@@ -306,49 +276,15 @@ function gerarImagemPartilha() {
 function mostrarEstrelas(jogadasUsadas, pares) {
   const estrelasEl = document.getElementById("performance-stars");
   estrelasEl.innerHTML = "";
-
   const ratio = jogadasUsadas / pares;
   let estrelas = 1;
-
   if (ratio <= 2) estrelas = 3;
   else if (ratio <= 3) estrelas = 2;
-
   for (let i = 0; i < estrelas; i++) {
     const star = document.createElement("span");
     star.textContent = "⭐";
     estrelasEl.appendChild(star);
   }
 }
-
-nextBtn.addEventListener("click", () => {
-  faseAtual++;
-
-  if (faseAtual >= emojisPorFase.length) {
-    alert("🎉 Parabéns! Completaste todas as fases!");
-    faseAtual = 0;
-    score = 0;
-  }
-
-  iniciarJogo();
-});
-
-restartBtn.addEventListener("click", () => {
-  score = 0;
-  faseAtual = 0;
-  iniciarJogo();
-});
-
-shareBtn.addEventListener("click", gerarImagemPartilha);
-
-document.querySelector("#endModal button").addEventListener("click", guardarPontuacao);
-
-document.addEventListener("click", () => {
-  if (!musicaTocando) {
-    bgMusic.play().then(() => {
-      musicaTocando = true;
-      toggleMusicBtn.textContent = "🔊 Música Ligada";
-    }).catch(() => {});
-  }
-}, { once: true });
 
 iniciarJogo();
