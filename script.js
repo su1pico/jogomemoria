@@ -1,7 +1,14 @@
 const emojisPorFase = [
-  ["🍎", "🍌", "🍇", "🍉"],
-  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
-  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
+  ["🍎", "🍌", "🍇", "🍉"],                           // 4 pares
+  ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],               // 6 pares
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"],     // 8 pares
+  ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🥏", "🎱", "🏓", "🏸"],
+  ["🚌", "🚓", "🚑", "🚒", "🚜", "🚀", "🚁", "✈️", "🚂", "🚗"],
+  ["🍕", "🍔", "🍟", "🌭", "🍿", "🥪", "🥞", "🧁", "🍰", "🍩"],
+  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "🪗", "🎤", "🎧", "📯"],
+  ["🐙", "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳"],
+  ["🧃", "🥤", "🍺", "🍷", "🥂", "🍾", "🥃", "🍸", "🍹", "🧋"],
+  ["👻", "🤖", "🎃", "😺", "🐵", "🐔", "🦄", "🐲", "🦕", "🐉"]
 ];
 
 let faseAtual = 0;
@@ -26,11 +33,14 @@ const rankingEl = document.getElementById("ranking");
 const rankingList = document.getElementById("ranking-list");
 const shareBtn = document.getElementById("share-button");
 const canvas = document.getElementById("shareCanvas");
+const estrelasEl = document.getElementById("performance-stars");
+const endModal = document.getElementById("endModal");
 
 const soundMatch = document.getElementById("sound-match");
 const soundError = document.getElementById("sound-error");
 const soundWin = document.getElementById("sound-win");
 const bgMusic = document.getElementById("bg-music");
+const endTheme = document.getElementById("end-theme");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
 let musicaTocando = false;
 
@@ -53,13 +63,15 @@ function iniciarJogo() {
       toggleMusicBtn.textContent = "🔊 Música Ligada";
     }).catch(() => {});
   }
+
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
-  movesSpan.textContent = 0;
-  scoreSpan.textContent = score;
   tempo = 0;
+  movesSpan.textContent = 0;
   timerSpan.textContent = "00:00";
+  scoreSpan.textContent = score;
+  estrelasEl.innerHTML = "";
   atualizarTituloFase();
   iniciarTimer();
   gerarCartas();
@@ -134,6 +146,7 @@ function virarCarta() {
   if (cartasSelecionadas.length === 2) {
     jogadas++;
     movesSpan.textContent = jogadas;
+    mostrarEstrelas(jogadas, emojisPorFase[faseAtual].length);
 
     const [c1, c2] = cartasSelecionadas;
 
@@ -180,11 +193,38 @@ function calcularPontuacao() {
   return Math.round(base * eficiencia * tempoFactor);
 }
 
+function mostrarEstrelas(jogadasUsadas, pares) {
+  estrelasEl.innerHTML = "";
+  const ratio = jogadasUsadas / pares;
+  let estrelas = 1;
+
+  if (ratio <= 2) estrelas = 3;
+  else if (ratio <= 3) estrelas = 2;
+
+  for (let i = 0; i < estrelas; i++) {
+    const star = document.createElement("span");
+    star.textContent = "⭐";
+    estrelasEl.appendChild(star);
+  }
+}
+
 function salvarRanking() {
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
-  dados.push({ score, nivel: faseAtual + 1, tempo });
+  dados.push({ nome: "Anónimo", score, nivel: faseAtual + 1, tempo });
   dados.sort((a, b) => b.score - a.score);
   localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
+}
+
+function guardarPontuacao() {
+  const nome = document.getElementById("playerName").value || "Anónimo";
+  const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
+
+  dados.push({ nome, score, nivel: faseAtual + 1, tempo });
+  dados.sort((a, b) => b.score - a.score);
+  localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
+
+  endModal.classList.add("hidden");
+  mostrarRanking();
 }
 
 function mostrarRanking() {
@@ -192,7 +232,7 @@ function mostrarRanking() {
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
   dados.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
+    li.textContent = `👤 ${item.nome} – 🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
     rankingList.appendChild(li);
   });
   rankingEl.classList.remove("hidden");
@@ -224,12 +264,12 @@ function gerarImagemPartilha() {
 }
 
 nextBtn.addEventListener("click", () => {
-  faseAtual++;
-  if (faseAtual >= emojisPorFase.length) {
-    alert("Parabéns! Completaste todas as fases!");
-    faseAtual = 0;
-    score = 0;
+  if (faseAtual >= emojisPorFase.length - 1) {
+    endTheme.play();
+    endModal.classList.remove("hidden");
+    return;
   }
+  faseAtual++;
   iniciarJogo();
 });
 
@@ -241,5 +281,4 @@ restartBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", gerarImagemPartilha);
 
-// Inicia o jogo automaticamente ao carregar a página
 iniciarJogo();
