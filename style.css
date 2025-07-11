@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
 * {
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Luckiest Guy', cursive;
   margin: 0;
   padding: 0;
 }
@@ -19,9 +21,9 @@ body {
   border-radius: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   padding: 30px;
-  width: 100%;
   max-width: 600px;
   text-align: center;
+  width: 100%;
 }
 
 header h1 {
@@ -70,19 +72,50 @@ header p {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("carapicopico.png") center/cover no-repeat;
+  background: #ffe599;
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Imagem da personagem */
+.card img.character-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* Emoji oculto inicialmente */
+.card .emoji {
+  font-size: 2rem;
+  z-index: 2;
+  position: relative;
+  visibility: hidden;
+}
+
+/* Emoji revelado ao virar */
+.card.flip .emoji {
+  visibility: visible;
+}
+
+/* Esconde imagem ao virar */
+.card.flip img.character-image {
+  display: none;
 }
 
 .card.flip {
   background: #ffffff;
-  transform: scale(1.1);
-  color: #000;
+  transform: scale(1.05);
 }
 
 .card.matched {
@@ -91,6 +124,7 @@ header p {
   box-shadow: 0 0 10px 2px #4caf50;
 }
 
+/* Botões */
 button {
   background-color: #ffcc00;
   border: none;
@@ -101,7 +135,6 @@ button {
   font-size: 1rem;
   font-weight: 600;
   transition: background-color 0.3s ease;
-  user-select: none;
 }
 
 button:hover:not(.hidden) {
@@ -116,13 +149,13 @@ button.hidden {
   margin-top: 10px;
   background-color: #0099ff;
   color: white;
-  font-weight: 600;
 }
 
 #toggle-music-btn:hover {
   background-color: #007acc;
 }
 
+/* Ranking */
 #ranking {
   text-align: left;
   margin-top: 20px;
@@ -135,7 +168,6 @@ button.hidden {
 #ranking h3 {
   margin-bottom: 10px;
   color: #333;
-  font-weight: 700;
 }
 
 #ranking-list {
@@ -149,60 +181,20 @@ button.hidden {
   display: none;
 }
 
-/* Estrelas de pontuação */
-#stars {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-bottom: 10px;
-}
-.star {
-  font-size: 1.4rem;
-  color: #ccc;
-}
-.star.active {
-  color: gold;
-}
-
-/* Campo de nome do jogador */
-#nome-jogador {
-  margin-top: 10px;
-}
-#nome-jogador input {
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  margin-right: 5px;
-}
-#nome-jogador button {
-  background-color: #28a745;
-  color: white;
-}
-#nome-jogador button:hover {
-  background-color: #218838;
-}
-
-/* Tempo limite visível */
-#tempo-limite {
-  margin-top: 5px;
-  font-size: 0.9rem;
-  color: #555;
-}
-
+/* Responsivo */
 @media (max-width: 400px) {
   .card {
     width: 50px;
     height: 50px;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
+  }
+
+  .card img.character-image {
+    border-radius: 8px;
   }
 
   button {
     padding: 8px 15px;
     font-size: 0.9rem;
-  }
-
-  #stars {
-    gap: 2px;
   }
 }
