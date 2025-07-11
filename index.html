@@ -2,24 +2,20 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Jogo Oficial da Memória do Pico-Pico" />
   <title>Desafio Pico-Pico</title>
 
-  <!-- Fonte estilo cartoon -->
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
-
-  <!-- Estilos -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <header>
       <h1>Desafio Pico-Pico</h1>
-      <p>Jogo da Memória – Teste os seus limites!</p>
+      <p>Jogo da Memória – Testa os teus limites!</p>
     </header>
 
-    <!-- Painel de informações -->
     <div class="score-panel">
       <span>🧠 Jogadas: <span id="moves">0</span></span>
       <span>🏆 Pontos: <span id="score">0</span></span>
@@ -28,18 +24,15 @@
     </div>
 
     <h2 id="stage-title">Fase 1: Fácil</h2>
+
+    <div id="stars-container"></div>
+
     <div id="game-board" class="game-board"></div>
 
-    <!-- Botões -->
     <button id="restart-button">🔁 Reiniciar</button>
     <button id="next-button" class="hidden">➡️ Próxima Fase</button>
     <button id="share-button" class="hidden">📤 Partilhar Resultado</button>
-    <button id="toggle-music-btn">🔇 Música Desligada</button>
 
-    <!-- Canvas para partilha -->
-    <canvas id="shareCanvas"></canvas>
-
-    <!-- Ranking -->
     <div id="ranking" class="hidden">
       <h3>🏅 Top 10 Jogadores</h3>
       <ul id="ranking-list"></ul>
@@ -52,9 +45,9 @@
   <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
 
   <!-- Música de fundo -->
-  <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
+<audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
+<button id="toggle-music-btn">🔊 Música Ligada</button>
 
-  <!-- Script principal -->
   <script src="script.js"></script>
 </body>
 </html>
