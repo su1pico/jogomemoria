@@ -10,8 +10,17 @@
   <div class="container">
     <header>
       <h1>Desafio Pico-Pico</h1>
-      <p>Jogo da Memória – Teste os seus limites!</p>
+      <p>Jogo da Memória – Testa os teus limites!</p>
     </header>
+<!-- Modal para inserir nome no fim -->
+<div id="endModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Fim do Jogo!</h2>
+    <p>Insere o teu nome:</p>
+    <input type="text" id="playerName" placeholder="O teu nome..." />
+    <button onclick="guardarPontuacao()">Guardar Pontuação</button>
+  </div>
+</div>
 
     <div class="score-panel">
   <span>🧠 Jogadas: <span id="moves">0</span></span>
@@ -21,6 +30,9 @@
 </div>
 
     <h2 id="stage-title">Fase 1: Fácil</h2>
+<div id="performance-stars" class="stars">
+  <!-- Estrelas serão adicionadas via JS -->
+</div>
 
     <div id="game-board" class="game-board"></div>
 
@@ -41,6 +53,7 @@
   <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
   <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
   <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
+<audio id="end-theme" src="fim-jogo.mp3" preload="auto"></audio>
 
   <!-- Música de fundo -->
   <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
