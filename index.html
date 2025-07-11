@@ -3,58 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Jogo Oficial da Memória do Pico-Pico" />
-  <title>Desafio Pico-Pico</title>
-
-  <!-- Fonte estilo cartoon -->
-  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
-
-  <!-- Estilos -->
+  <title>Jogo da Memória - Pico-Pico</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Desafio Pico-Pico</h1>
-      <p>Jogo da Memória – Testa os teus limites!</p>
+      <h1>Jogo da Memória</h1>
+      <p>Ajuda o Pico-Pico a combinar pares!</p>
     </header>
 
-    <!-- Painel de informações -->
+    <div id="stage-title">Nível 1</div>
+
     <div class="score-panel">
-      <span>🧠 Jogadas: <span id="moves">0</span></span>
-      <span>🏆 Pontos: <span id="score">0</span></span>
-      <span>⏱️ Tempo: <span id="timer">00:00</span></span>
-      <span>🎯 Nível: <span id="level">1</span></span>
+      <div>Jogadas: <span id="jogadas">0</span></div>
+      <div>Tempo: <span id="tempo-limite">--</span></div>
     </div>
 
-    <h2 id="stage-title">Fase 1: Fácil</h2>
-    <div id="game-board" class="game-board"></div>
+    <!-- Estrelas de desempenho -->
+    <div id="stars">
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+    </div>
 
-    <!-- Botões -->
-    <button id="restart-button">🔁 Reiniciar</button>
-    <button id="next-button" class="hidden">➡️ Próxima Fase</button>
-    <button id="share-button" class="hidden">📤 Partilhar Resultado</button>
-    <button id="toggle-music-btn">🔇 Música Desligada</button>
+    <!-- Tabuleiro -->
+    <div class="game-board" id="game-board">
+      <!-- Cartas geradas pelo JS -->
+    </div>
 
-    <!-- Canvas para partilha -->
-    <canvas id="shareCanvas"></canvas>
+    <!-- Botões de ação -->
+    <button id="proximo-nivel" class="hidden">Próximo Nível</button>
+    <button id="reiniciar">Reiniciar</button>
+    <button id="toggle-music-btn">🎵 Música</button>
+
+    <!-- Inserção de nome após nível -->
+    <div id="nome-jogador" class="hidden">
+      <input type="text" id="input-nome" placeholder="O teu nome..." />
+      <button id="guardar-nome">Guardar</button>
+    </div>
 
     <!-- Ranking -->
-    <div id="ranking" class="hidden">
-      <h3>🏅 Top 10 Jogadores</h3>
+    <div id="ranking">
+      <h3>Ranking:</h3>
       <ul id="ranking-list"></ul>
     </div>
+
+    <canvas id="shareCanvas"></canvas>
   </div>
 
   <!-- Sons -->
-  <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
-  <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
-  <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
+  <audio id="som-acerto" src="sons/acerto.mp3"></audio>
+  <audio id="som-erro" src="sons/erro.mp3"></audio>
+  <audio id="som-vitoria" src="sons/vitoria.mp3"></audio>
+  <audio id="musica-fundo" src="sons/musica.mp3" loop></audio>
 
-  <!-- Música de fundo -->
-  <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
-
-  <!-- Script principal -->
   <script src="script.js"></script>
 </body>
 </html>
