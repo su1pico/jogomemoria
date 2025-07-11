@@ -3,7 +3,6 @@ const emojisPorFase = [
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
   ["🌸", "🌻", "🌼", "🌹", "🌷", "🪻", "🍀", "🍁"]
 ];
-
 let faseAtual = 0;
 let cartasSelecionadas = [];
 let cartasViradas = 0;
@@ -55,7 +54,7 @@ function iniciarJogo() {
   cartasViradas = 0;
   jogadas = 0;
   movesSpan.textContent = 0;
-  scoreSpan.textContent = 0;
+  scoreSpan.textContent = score;
   tempo = 0;
   timerSpan.textContent = "00:00";
   atualizarTituloFase();
@@ -90,8 +89,15 @@ function atualizarTituloFase() {
 function criarCarta(emoji) {
   const carta = document.createElement("div");
   carta.className = "card";
-  carta.textContent = "❓";
   carta.dataset.emoji = emoji;
+
+  const imagem = document.createElement("img");
+  imagem.src = "carapicopico.png"; /* Cara do Pico */
+  imagem.alt = "Clica para revelar";
+  imagem.className = "character-image";
+  carta.appendChild(imagem);
+  carta.textContent = emoji;
+  carta.style.color = "transparent";
   carta.addEventListener("click", virarCarta);
   return carta;
 }
@@ -108,8 +114,12 @@ function gerarCartas() {
 function virarCarta() {
   if (cartasSelecionadas.length === 2 || this.classList.contains("flip")) return;
 
-  this.textContent = this.dataset.emoji;
   this.classList.add("flip");
+
+  const img = this.querySelector("img");
+  if (img) img.style.display = "none";
+
+  this.style.color = "#000";
   cartasSelecionadas.push(this);
 
   if (cartasSelecionadas.length === 2) {
@@ -141,8 +151,14 @@ function virarCarta() {
       setTimeout(() => {
         c1.classList.remove("flip");
         c2.classList.remove("flip");
-        c1.textContent = "❓";
-        c2.textContent = "❓";
+
+        const img1 = c1.querySelector("img");
+        const img2 = c2.querySelector("img");
+        if (img1) img1.style.display = "block";
+        if (img2) img2.style.display = "block";
+
+        c1.style.color = "transparent";
+        c2.style.color = "transparent";
         cartasSelecionadas = [];
       }, 800);
     }
@@ -166,7 +182,7 @@ function salvarRanking() {
 function mostrarRanking() {
   rankingList.innerHTML = "";
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
-  dados.forEach((item, i) => {
+  dados.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = `🎯 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
     rankingList.appendChild(li);
@@ -183,10 +199,10 @@ function gerarImagemPartilha() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "#333";
-  ctx.font = "bold 22px 'Segoe UI', sans-serif";
+  ctx.font = "bold 22px 'Luckiest Guy', cursive";
   ctx.fillText("🐥 Desafio Pico-Pico", 20, 40);
 
-  ctx.font = "18px 'Segoe UI', sans-serif";
+  ctx.font = "18px 'Comic Neue', sans-serif";
   ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
   ctx.fillText(`🎯 Nível: ${faseAtual + 1}`, 20, 110);
   ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempo)}`, 20, 140);
@@ -206,15 +222,4 @@ nextBtn.addEventListener("click", () => {
     faseAtual = 0;
     score = 0;
   }
-  iniciarJogo();
-});
-
-restartBtn.addEventListener("click", () => {
-  score = 0;
-  faseAtual = 0;
-  iniciarJogo();
-});
-
-shareBtn.addEventListener("click", gerarImagemPartilha);
-
-iniciarJogo();
+  iniciarJogo
