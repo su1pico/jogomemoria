@@ -1,52 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Jogo Oficial da Memória do Pico-Pico" />
-  <title>Desafio Pico-Pico</title>
-  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <title>Desafio Pico-Pico - Jogo da Memória</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Desafio Pico-Pico</h1>
-      <p>Jogo da Memória – Teste os seus limites!</p>
-    </header>
-
-    <div class="score-panel">
-      <span>🧠 Jogadas: <span id="moves">0</span></span>
-      <span>🏆 Pontos: <span id="score">0</span></span>
-      <span>⏱️ Tempo: <span id="timer">00:00</span></span>
-      <span>🎯 Nível: <span id="level">1</span></span>
+  <header>
+    <h1>Desafio Pico-Pico</h1>
+    <h2>Jogo da Memória – Teste os seus limites!</h2>
+    <div id="level-info">
+      <span>Fase: <span id="level">1</span></span>
+      <span>Jogadas: <span id="moves">0</span></span>
+      <span>Pontuação: <span id="score">0</span></span>
+      <span>Tempo: <span id="timer">00:00</span></span>
+      <span id="stars-container"></span>
     </div>
+  </header>
 
-    <h2 id="stage-title">Fase 1: Fácil</h2>
-    <div id="game-board" class="game-board"></div>
+  <main>
+    <div id="game-board"></div>
+  </main>
 
-    <button id="restart-button">🔁 Reiniciar</button>
-    <button id="next-button" class="hidden">➡️ Próxima Fase</button>
-    <button id="share-button" class="hidden">📤 Partilhar Resultado</button>
+  <footer>
+    <button id="restart-button">Recomeçar</button>
+    <button id="next-button" class="hidden">Próxima Fase</button>
+    <button id="share-button" class="hidden">Partilhar</button>
     <button id="toggle-music-btn">🔊 Música Ligada</button>
+    <audio id="bg-music" src="musica-fundo.mp3" loop preload="auto"></audio>
+  </footer>
 
-    <canvas id="shareCanvas"></canvas>
-
-    <div id="ranking" class="hidden">
-      <h3>🏅 Top 10 Jogadores</h3>
-      <ul id="ranking-list"></ul>
+  <!-- Modal fim de fase -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Fim da Fase!</h3>
+      <p>Pontuação: <span id="modal-score">0</span></p>
+      <p>Estrelas: <span id="modal-stars"></span></p>
+      <label for="player-name">Nome:</label>
+      <input type="text" id="player-name" maxlength="10" placeholder="O teu nome" />
+      <button id="save-score-btn">Guardar</button>
     </div>
   </div>
 
-  <!-- Sons -->
-  <audio id="sound-match" src="acerto.mp3" preload="auto"></audio>
-  <audio id="sound-error" src="erro.mp3" preload="auto"></audio>
-  <audio id="sound-win" src="vitoria.mp3" preload="auto"></audio>
-
-  <!-- Música de fundo -->
-  <audio id="bg-music" src="musica-fundo.mp3" loop autoplay preload="auto"></audio>
-
-  <!-- Script principal -->
   <script src="script.js"></script>
 </body>
 </html>
