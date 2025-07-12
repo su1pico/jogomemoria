@@ -1,3 +1,3 @@
 # Desafio Pico-Pico
 
-**Jogo da Memória – Teste os seus limites!** 
+**Jogo da Memória – Testa os teus limites!** 
