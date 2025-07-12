@@ -1,11 +1,11 @@
 const emojisPorFase = [
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
-  ["🌸", "🌻", "🌼", "🌹", "🌷", "😉", "🍀", "🍁"],
+  ["🌸", "🌻", "🌼", "🌹", "🌷", "🩻", "🍀", "🍁"],
   ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🥏", "🎱", "🎓", "🏉"],
   ["🚌", "🚓", "🚑", "🚒", "🚜", "🚀", "🚁", "✈️", "🚂", "🚗"],
   ["🍕", "🍔", "🍟", "🌭", "🍿", "🥪", "🥞", "🧁", "🍰", "🍩"],
-  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "😉", "🎤", "🎧", "📯"],
+  ["🎵", "🎸", "🎻", "🥁", "🎷", "🎺", "🪗", "🎤", "🎧", "📯"],
   ["🐙", "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳"],
   ["🧃", "🥤", "🍺", "🍷", "🥂", "🍾", "🥃", "🍸", "🍹", "🧋"],
   ["👻", "🤖", "🎃", "😺", "🐵", "🐔", "🦄", "🐲", "🦕", "🐉"]
@@ -95,13 +95,13 @@ function iniciarTimer() {
 function formatarTempo(s) {
   const min = String(Math.floor(s / 60)).padStart(2, "0");
   const sec = String(s % 60).padStart(2, "0");
-  return `${min}:${sec}`;
+  return ${min}:${sec};
 }
 
 function atualizarTituloFase() {
   const titulos = ["Fácil", "Médio", "Intermédio", "Difícil"];
   const emojis = emojisPorFase[faseAtual];
-  stageTitle.innerHTML = `Fase ${faseAtual + 1}: ${titulos[faseAtual] || "Avançado"}<br><small>${emojis.length * 2} cartas – Encontre ${emojis.length} pares</small>`;
+  stageTitle.innerHTML = Fase ${faseAtual + 1}: ${titulos[faseAtual] || "Avançado"}<br><small>${emojis.length * 2} cartas – Encontre ${emojis.length} pares</small>;
   levelSpan.textContent = faseAtual + 1;
 }
 
@@ -220,7 +220,7 @@ function mostrarRanking() {
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
   dados.forEach(item => {
     const li = document.createElement("li");
-    li.textContent = `👤 ${item.nome} – 🌟 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
+    li.textContent = 👤 ${item.nome} – 🌟 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s);
     rankingList.appendChild(li);
   });
 }
@@ -235,10 +235,10 @@ shareBtn.addEventListener("click", () => {
   ctx.font = "bold 22px 'Luckiest Guy', cursive";
   ctx.fillText("👥 Desafio Pico-Pico", 20, 40);
   ctx.font = "18px 'Luckiest Guy', cursive";
-  ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
-  ctx.fillText(`🌟 Nível: ${faseAtual + 1}`, 20, 110);
-  ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempoMaximo - tempo)}`, 20, 140);
-  ctx.fillText(`📌 Jogadas: ${jogadas}`, 20, 170);
+  ctx.fillText(🏆 Pontuação: ${score}, 20, 80);
+  ctx.fillText(🌟 Nível: ${faseAtual + 1}, 20, 110);
+  ctx.fillText(⏱️ Tempo: ${formatarTempo(tempoMaximo - tempo)}, 20, 140);
+  ctx.fillText(📌 Jogadas: ${jogadas}, 20, 170);
   const url = canvas.toDataURL("image/png");
   const link = document.createElement("a");
   link.href = url;
