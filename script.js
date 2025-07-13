@@ -39,6 +39,7 @@ const bgMusic = document.getElementById("bg-music");
 const toggleMusicBtn = document.getElementById("toggle-music-btn");
 const endModal = document.getElementById("endModal");
 const playerNameInput = document.getElementById("playerName");
+const starsContainer = document.getElementById("stars-container");
 
 let musicaTocando = false;
 
@@ -60,8 +61,8 @@ function iniciarJogo() {
   cartasSelecionadas = [];
   cartasViradas = 0;
   jogadas = 0;
+  tempoMaximo = 60 + faseAtual * 30;
   tempo = tempoMaximo;
-  definirTempoLimite();
 
   movesSpan.textContent = 0;
   scoreSpan.textContent = score;
@@ -72,11 +73,6 @@ function iniciarJogo() {
   rankingEl.classList.add("hidden");
   shareBtn.classList.add("hidden");
   endModal.classList.add("hidden");
-}
-
-function definirTempoLimite() {
-  tempoMaximo = 60 + faseAtual * 30;
-  tempo = tempoMaximo;
 }
 
 function iniciarTimer() {
@@ -183,11 +179,31 @@ function calcularPontuacao() {
   return Math.round(base * eficiencia * tempoFactor);
 }
 
+function calcularEstrelas() {
+  const maxScorePorFase = 1500; // Ajusta conforme necessário
+  const percentual = score / maxScorePorFase;
+
+  if (percentual >= 0.8) return 3;
+  else if (percentual >= 0.5) return 2;
+  else return 1;
+}
+
+function mostrarEstrelas() {
+  starsContainer.innerHTML = "";
+  const n = calcularEstrelas();
+  for (let i = 0; i < n; i++) {
+    const star = document.createElement("span");
+    star.textContent = "⭐";
+    starsContainer.appendChild(star);
+  }
+}
+
 function mostrarModalFim(venceu) {
   clearInterval(timer);
   endModal.classList.remove("hidden");
   rankingEl.classList.remove("hidden");
   shareBtn.classList.toggle("hidden", !venceu);
+  mostrarEstrelas();
 }
 
 function guardarPontuacao() {
@@ -203,6 +219,9 @@ function guardarPontuacao() {
   localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
 
   mostrarRanking();
+
+  gerarImagemPartilha(); // Atualiza imagem antes de fechar modal
+
   endModal.classList.add("hidden");
 
   if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
@@ -215,56 +234,76 @@ function guardarPontuacao() {
   }
 
   iniciarJogo();
-  gerarImagemPartilha();
+
   return true;
 }
 
 function mostrarRanking() {
-  rankingList.innerHTML = "";
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
-  dados.forEach(item => {
+  rankingList.innerHTML = dados.length ? "" : "<li>Nenhuma pontuação ainda</li>";
+  dados.forEach(({ nome, score, nivel, tempo }) => {
     const li = document.createElement("li");
-    li.textContent = `👤 ${item.nome} – 🌟 Nível ${item.nivel} – 🏆 Pontos: ${item.score} – ⏱️ Tempo: ${formatarTempo(item.tempo)}`;
+    li.textContent = `${nome} - Pontos: ${score} | Fase: ${nivel} | Tempo: ${formatarTempo(tempo)}`;
     rankingList.appendChild(li);
   });
 }
 
 function gerarImagemPartilha() {
   const ctx = canvas.getContext("2d");
-  canvas.width = 500;
-  canvas.height = 260;
-  ctx.fillStyle = "#FFE59A";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#ff9900";
-  ctx.font = "bold 22px 'Luckiest Guy', cursive";
-  ctx.fillText("👥 Desafio Pico-Pico", 20, 40);
-  ctx.font = "18px 'Luckiest Guy', cursive";
-  ctx.fillText(`🏆 Pontuação: ${score}`, 20, 80);
-  ctx.fillText(`🌟 Nível: ${faseAtual + 1}`, 20, 110);
-  ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempoMaximo - tempo)}`, 20, 140);
-  ctx.fillText(`📌 Jogadas: ${jogadas}`, 20, 170);
+  const largura = canvas.width;
+  const altura = canvas.height;
+
+  ctx.clearRect(0, 0, largura, altura);
+
+  // Fundo amarelo
+  ctx.fillStyle = "#ffc107";
+  ctx.fillRect(0, 0, largura, altura);
+
+  // Desenha personagem (pode substituir com imagem carregada)
+  const personagem = new Image();
+  personagem.src = personagemImagem;
+  personagem.onload = () => {
+    ctx.drawImage(personagem, 20, 20, 120, 120);
+
+    // Texto
+    ctx.fillStyle = "#000";
+    ctx.font = "bold 28px Arial";
+    ctx.fillText("Desafio Pico-Pico", 160, 60);
+
+    ctx.font = "24px Arial";
+    ctx.fillText(`Pontuação: ${score}`, 160, 100);
+    ctx.fillText(`Fase: ${faseAtual + 1}`, 160, 140);
+
+    // Para facilitar partilha, transformamos canvas em imagem
+    const dataURL = canvas.toDataURL("image/png");
+    shareBtn.href = dataURL;
+  };
+
+  // Caso personagem não carregue rápido, desenha o texto mesmo assim
+  setTimeout(() => {
+    if (!personagem.complete) {
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 28px Arial";
+      ctx.fillText("Desafio Pico-Pico", 160, 60);
+      ctx.font = "24px Arial";
+      ctx.fillText(`Pontuação: ${score}`, 160, 100);
+      ctx.fillText(`Fase: ${faseAtual + 1}`, 160, 140);
+    }
+  }, 500);
 }
 
-shareBtn.addEventListener("click", () => {
-  canvas.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `DesafioPicoPico_${playerNameInput.value || "player"}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
+shareBtn.addEventListener("click", (e) => {
+  if (!shareBtn.href) {
+    e.preventDefault();
+    alert("A imagem ainda não está pronta para partilha. Tente de novo.");
+  }
 });
 
-// Capturar Enter no input para guardar pontuação
-playerNameInput.addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
+playerNameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
     guardarPontuacao();
   }
 });
 
-// Iniciar o jogo ao carregar a página
-window.onload = iniciarJogo;
+iniciarJogo();
+mostrarRanking();
