@@ -1,5 +1,3 @@
-// JOGO DA MEMÓRIA PICO-PICO - SCRIPT CORRIGIDO E OTIMIZADO
-
 const emojisPorFase = [
   ["🍎", "🍌", "🍇", "🍉"],
   ["🐶", "🐱", "🐭", "🐰", "🐼", "🦊"],
