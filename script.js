@@ -190,19 +190,20 @@ function mostrarModalFim(venceu) {
   shareBtn.classList.toggle("hidden", !venceu);
 }
 
-document.querySelector("#endModal button").addEventListener("click", guardarPontuacao);
-
 function guardarPontuacao() {
   const nome = playerNameInput.value.trim();
-  if (!nome) return alert("Por favor, insira um nome!");
+  if (!nome) {
+    alert("Por favor, insira um nome!");
+    return false;
+  }
 
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
   dados.push({ nome, score, nivel: faseAtual + 1, tempo: tempoMaximo - tempo });
   dados.sort((a, b) => b.score - a.score);
   localStorage.setItem("rankingPicoPico", JSON.stringify(dados.slice(0, 10)));
 
-  endModal.classList.add("hidden");
   mostrarRanking();
+  endModal.classList.add("hidden");
 
   if (cartasViradas === emojisPorFase[faseAtual].length * 2) {
     faseAtual++;
@@ -212,7 +213,10 @@ function guardarPontuacao() {
       score = 0;
     }
   }
+
   iniciarJogo();
+  gerarImagemPartilha();
+  return true;
 }
 
 function mostrarRanking() {
@@ -220,12 +224,12 @@ function mostrarRanking() {
   const dados = JSON.parse(localStorage.getItem("rankingPicoPico") || "[]");
   dados.forEach(item => {
     const li = document.createElement("li");
-    li.textContent = `👤 ${item.nome} – 🌟 Nível ${item.nivel} – ${item.score} pts (${item.tempo}s)`;
+    li.textContent = `👤 ${item.nome} – 🌟 Nível ${item.nivel} – 🏆 Pontos: ${item.score} – ⏱️ Tempo: ${formatarTempo(item.tempo)}`;
     rankingList.appendChild(li);
   });
 }
 
-shareBtn.addEventListener("click", () => {
+function gerarImagemPartilha() {
   const ctx = canvas.getContext("2d");
   canvas.width = 500;
   canvas.height = 260;
@@ -239,11 +243,28 @@ shareBtn.addEventListener("click", () => {
   ctx.fillText(`🌟 Nível: ${faseAtual + 1}`, 20, 110);
   ctx.fillText(`⏱️ Tempo: ${formatarTempo(tempoMaximo - tempo)}`, 20, 140);
   ctx.fillText(`📌 Jogadas: ${jogadas}`, 20, 170);
-  const url = canvas.toDataURL("image/png");
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "desafio-pico-pico.png";
-  link.click();
+}
+
+shareBtn.addEventListener("click", () => {
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `DesafioPicoPico_${playerNameInput.value || "player"}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 });
 
-iniciarJogo();
+// Capturar Enter no input para guardar pontuação
+playerNameInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    guardarPontuacao();
+  }
+});
+
+// Iniciar o jogo ao carregar a página
+window.onload = iniciarJogo;
