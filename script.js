@@ -71,7 +71,7 @@ function iniciarJogo() {
   jogadas = 0;
   movesSpan.textContent = 0;
   scoreSpan.textContent = score;
-  tempo = 0;
+  tempo = tempoMaximo; // começa no limite máximo da fase
 
   definirTempoLimite();
 
@@ -90,6 +90,7 @@ function definirTempoLimite() {
   // Define tempo máximo por fase (em segundos) — podes ajustar os valores
   const base = 60; // 60s para fase 1
   tempoMaximo = base + faseAtual * 30; // aumenta 30s a cada fase
+  tempo = tempoMaximo;
 }
 
 function iniciarTimer() {
@@ -212,12 +213,17 @@ function calcularPontuacao() {
 }
 
 function mostrarModalFim(venceu) {
-  // Mostrar modal e impedir jogar mais até inserir nome
   clearInterval(timer);
   endModal.classList.remove("hidden");
   rankingEl.classList.remove("hidden");
-  nextBtn.classList.toggle("hidden", !venceu);
-  shareBtn.classList.toggle("hidden", !venceu);
+
+  if (venceu) {
+    nextBtn.classList.remove("hidden");
+    shareBtn.classList.remove("hidden");
+  } else {
+    nextBtn.classList.add("hidden");
+    shareBtn.classList.add("hidden");
+  }
 }
 
 function guardarPontuacao() {
@@ -274,7 +280,7 @@ function gerarImagemPartilha() {
 
 function mostrarEstrelas(jogadasUsadas, pares) {
   const estrelasEl = document.getElementById("performance-stars");
-  estrelasEl.innerHTML = ""; // Limpa anterior
+  estrelasEl.innerHTML = "";
 
   const ratio = jogadasUsadas / pares;
   let estrelas = 1;
@@ -291,11 +297,13 @@ function mostrarEstrelas(jogadasUsadas, pares) {
 
 nextBtn.addEventListener("click", () => {
   faseAtual++;
+
   if (faseAtual >= emojisPorFase.length) {
-    alert("Parabéns! Completaste todas as fases!");
+    alert("🎉 Parabéns! Completaste todas as fases!");
     faseAtual = 0;
     score = 0;
   }
+
   iniciarJogo();
 });
 
@@ -309,5 +317,13 @@ shareBtn.addEventListener("click", gerarImagemPartilha);
 
 document.querySelector("#endModal button").addEventListener("click", guardarPontuacao);
 
-// Inicia o jogo automaticamente ao carregar a página
+document.addEventListener("click", () => {
+  if (!musicaTocando) {
+    bgMusic.play().then(() => {
+      musicaTocando = true;
+      toggleMusicBtn.textContent = "🔊 Música Ligada";
+    }).catch(() => {});
+  }
+}, { once: true });
+
 iniciarJogo();
